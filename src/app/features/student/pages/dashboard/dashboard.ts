@@ -41,6 +41,8 @@ export class Dashboard implements OnInit {
   readonly nextLiveClass = computed(() => this.upcomingClasses()[0] ?? null);
 
   ngOnInit(): void {
+    this.studentService.loadProgress().subscribe();
+
     this.taskService.getStudentTasks().subscribe({
       next: (tasks) => this.tasks.set(tasks),
       error: () => this.tasks.set([]),

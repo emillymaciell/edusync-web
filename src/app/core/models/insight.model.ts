@@ -27,7 +27,6 @@ export interface StudentProgressSummary {
   totalLessons: number;
   tasksSubmitted: number;
   totalTasks: number;
-  streakDays: number;
   trilha: TrilhaStep[];
   achievements: Achievement[];
 }

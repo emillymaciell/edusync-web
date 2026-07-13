@@ -149,40 +149,6 @@
   color: var(--color-primary);
 }
 
-.streak {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--gradient-brand-soft);
-  padding: 14px 16px;
-  border-radius: var(--radius-md);
-}
-
-.streak-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 999px;
-  background: #fff;
-  color: #ea580c;
-  flex-shrink: 0;
-}
-
-.streak strong {
-  font-size: 1.1rem;
-}
-
-.streak span {
-  font-size: 0.8125rem;
-  color: var(--color-text-muted);
-}
-
-.conquests-title {
-  margin-top: 4px;
-}
-
 .achievements {
   display: flex;
   flex-direction: column;

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { StudentService } from '../../../../core/services/student.service';
 import { Icon } from '../../../../shared/ui/icon/icon';
 import { ProgressBar } from '../../../../shared/ui/progress-bar/progress-bar';
@@ -10,7 +10,11 @@ import { ProgressBar } from '../../../../shared/ui/progress-bar/progress-bar';
   templateUrl: './progress.html',
   styleUrl: './progress.scss',
 })
-export class Progress {
+export class Progress implements OnInit {
   private readonly studentService = inject(StudentService);
   readonly progress = this.studentService.progress;
+
+  ngOnInit(): void {
+    this.studentService.loadProgress().subscribe();
+  }
 }

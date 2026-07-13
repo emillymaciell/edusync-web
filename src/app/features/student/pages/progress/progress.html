@@ -2,7 +2,7 @@
   <div class="page-header">
     <div>
       <h1>Meu Progresso</h1>
-      <p>Acompanhe sua evolução, sua sequência de estudos e sua trilha de aprendizado.</p>
+      <p>Acompanhe sua evolução e sua trilha de aprendizado.</p>
     </div>
   </div>
 
@@ -62,16 +62,7 @@
     </div>
 
     <div class="card">
-      <strong class="section-title">Sequência de estudos</strong>
-      <div class="streak">
-        <span class="streak-icon"><app-icon name="flame" [size]="26" /></span>
-        <div>
-          <strong>{{ progress().streakDays }} dias</strong>
-          <span>Estudando sem interrupções</span>
-        </div>
-      </div>
-
-      <strong class="section-title conquests-title">Conquistas recentes</strong>
+      <strong class="section-title">Conquistas recentes</strong>
       @if (progress().achievements.length) {
         <ul class="achievements">
           @for (achievement of progress().achievements; track achievement.title) {
