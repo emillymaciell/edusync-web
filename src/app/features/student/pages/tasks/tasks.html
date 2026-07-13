@@ -1,0 +1,169 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Minhas Atividades</h1>
+      <p>Acompanhe suas tarefas, prazos e correções em um só lugar.</p>
+    </div>
+  </div>
+
+  @if (tasksLoading()) {
+    <div class="list-state"><span class="spinner"></span> Carregando atividades...</div>
+  } @else if (tasksError()) {
+    <div class="list-state list-error">
+      <p>{{ tasksError() }}</p>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="loadTasks()">
+        <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+      </button>
+    </div>
+  } @else if (tasks().length) {
+    <div class="task-list">
+      @for (task of tasks(); track task.id) {
+        <div class="card task-card" [class.expanded]="isExpanded(task.id)">
+          <div class="task-card-header">
+            <div class="task-info">
+              <div class="task-title-row">
+                <strong>{{ task.title }}</strong>
+                <app-status-badge [label]="statusLabel[task.status]" [tone]="toneForStatus(task.status)" />
+              </div>
+              <div class="task-meta">
+                <span><app-icon name="calendar" [size]="14" /> Prazo: {{ formatDueDate(task.dueDate) }}</span>
+              </div>
+            </div>
+
+            <div class="task-actions">
+              <button type="button" class="btn btn-secondary btn-sm" (click)="toggleActivity(task)">
+                @if (isExpanded(task.id)) {
+                  <app-icon name="chevron-down" [size]="15" class="chevron-flip" /> Ocultar
+                } @else {
+                  <app-icon name="eye" [size]="15" /> Ver Atividade
+                }
+              </button>
+            </div>
+          </div>
+
+          @if (isExpanded(task.id)) {
+            <div class="task-card-body">
+              @if (task.status === 'ENTREGUE' || task.status === 'ENVIADA') {
+                <div class="status-alert status-alert-pending" role="status">
+                  <span aria-hidden="true">⏳</span>
+                  <p>Resposta enviada! Aguardando a correção da professora.</p>
+                </div>
+              }
+
+              @if (task.status === 'CORRIGIDA') {
+                <div class="status-alert status-alert-corrected" role="status">
+                  <app-icon name="check-circle" [size]="16" />
+                  <p>Correção liberada! Confira o gabarito e as explicações abaixo.</p>
+                </div>
+              }
+
+              @if (parseQuiz(task.description); as quiz) {
+                @if (quiz.tema) {
+                  <p class="quiz-theme"><strong>Tema:</strong> {{ quiz.tema }}</p>
+                }
+
+                <div class="quiz-form" [class.readonly]="isReadonly(task)">
+                  @for (questao of quiz.questoes; track $index; let questionIndex = $index) {
+                    <div class="quiz-question">
+                      <p class="quiz-question-stem">
+                        <span class="quiz-question-number">{{ questionIndex + 1 }}.</span>
+                        <strong>{{ questao.enunciado }}</strong>
+                      </p>
+
+                      <div class="quiz-options">
+                        @for (opcao of questao.opcoes; track opcao) {
+                          <label
+                            class="quiz-option"
+                            [class.selected]="getOptionClass(opcao, questao, task, questionIndex) === 'selected'"
+                            [class.correct-selected]="getOptionClass(opcao, questao, task, questionIndex) === 'correct-selected'"
+                            [class.wrong-selected]="getOptionClass(opcao, questao, task, questionIndex) === 'wrong-selected'"
+                            [class.correct-answer]="getOptionClass(opcao, questao, task, questionIndex) === 'correct-answer'"
+                          >
+                            <input
+                              type="radio"
+                              [name]="'quiz-' + task.id + '-' + questionIndex"
+                              [value]="opcao"
+                              [checked]="isOptionSelected(task, questionIndex, opcao)"
+                              [disabled]="isReadonly(task)"
+                              (change)="selectOption(questionIndex, opcao)"
+                            />
+                            <span>{{ opcao }}</span>
+                            @if (
+                              task.status === 'CORRIGIDA' &&
+                              getStudentAnswerForQuestion(task.studentAnswer, questionIndex) === opcao &&
+                              isQuestionCorrect(questao, task.studentAnswer, questionIndex)
+                            ) {
+                              <app-icon name="check-circle" [size]="16" class="quiz-option-icon" />
+                            }
+                            @if (
+                              task.status === 'CORRIGIDA' &&
+                              getStudentAnswerForQuestion(task.studentAnswer, questionIndex) === opcao &&
+                              !isQuestionCorrect(questao, task.studentAnswer, questionIndex)
+                            ) {
+                              <app-icon name="close" [size]="16" class="quiz-option-icon" />
+                            }
+                          </label>
+                        }
+                      </div>
+
+                      @if (task.status === 'CORRIGIDA') {
+                        <div class="correction-feedback">
+                          <p class="correction-answer-key">
+                            <strong>Gabarito:</strong> {{ questao.respostaCorreta }}
+                          </p>
+                          <div class="explanation-box">
+                            <div class="explanation-box-header">
+                              <span class="explanation-icon" aria-hidden="true">💡</span>
+                              <strong>Explicação da IA</strong>
+                            </div>
+                            <p>{{ questao.explicacao }}</p>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="activity-content" [innerHTML]="task.description | cleanLessonText"></div>
+
+                <label class="answer-label" for="answer-{{ task.id }}">Sua resposta</label>
+                <textarea
+                  id="answer-{{ task.id }}"
+                  class="answer-textarea"
+                  [(ngModel)]="textAnswer"
+                  [disabled]="isReadonly(task)"
+                  placeholder="Escreva aqui a sua resposta para esta atividade..."
+                  rows="5"
+                ></textarea>
+              }
+
+              @if (!isReadonly(task)) {
+                <div class="answer-actions">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    (click)="submitAnswer(task)"
+                    [disabled]="isSubmitting()"
+                  >
+                    @if (isSubmitting()) {
+                      <span class="spinner"></span> Enviando...
+                    } @else {
+                      <app-icon name="send" [size]="15" /> Enviar
+                    }
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <app-empty-state
+      icon="clipboard"
+      title="Nenhuma atividade por aqui"
+      description="Quando seu professor atribuir tarefas, elas vão aparecer nesta tela."
+    />
+  }
+</div>
+

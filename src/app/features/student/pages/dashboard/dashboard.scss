@@ -1,0 +1,139 @@
+.grid-top,
+.grid-bottom {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.card {
+  padding: 20px;
+}
+
+.progress-card,
+.next-class-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.big-number {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.module-tag {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.module-tag strong {
+  color: var(--color-text);
+}
+
+.next-class-card strong {
+  font-size: 1.05rem;
+}
+
+.next-class-card .meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.next-class-card .btn {
+  margin-top: 6px;
+}
+
+.empty-copy {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  padding: 12px 0;
+}
+
+.list-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.list-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.list-card-header strong {
+  font-size: 0.9375rem;
+}
+
+.list-card-header a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.list-card ul {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.list-card li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.list-card li > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.list-card li strong {
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-card li span {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.play-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+@media (min-width: 720px) {
+  .grid-top,
+  .grid-bottom {
+    grid-template-columns: 1fr 1fr;
+  }
+}

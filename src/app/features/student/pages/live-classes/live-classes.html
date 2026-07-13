@@ -1,0 +1,102 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Aulas ao Vivo</h1>
+      <p>Participe das sessões ao vivo e revise as aulas já realizadas.</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="hint">Carregando aulas ao vivo…</p>
+  } @else {
+    <div>
+      <strong class="section-title">Próximas aulas</strong>
+      @if (upcomingClasses().length === 0) {
+        <div class="empty-box">
+          <span class="empty-box-icon"><app-icon name="video" [size]="22" /></span>
+          <p>Você não tem nenhuma aula ao vivo agendada no momento.</p>
+        </div>
+      } @else {
+        <div class="live-grid">
+          @for (liveClass of upcomingClasses(); track liveClass.id) {
+            <div class="card live-card">
+              <div class="live-header">
+                <span class="live-icon"><app-icon name="video" [size]="18" /></span>
+                <app-status-badge
+                  [label]="liveStatusLabel(liveClass.status)"
+                  [tone]="toneForStatus(liveStatusLabel(liveClass.status))"
+                />
+              </div>
+              <strong>{{ liveClass.title }}</strong>
+              @if (liveClass.description) {
+                <p>{{ liveClass.description }}</p>
+              }
+              <span class="meta">
+                <app-icon name="user" [size]="14" /> {{ teacherName(liveClass) }}
+              </span>
+              <span class="meta">
+                <app-icon name="calendar" [size]="14" />
+                @if (scheduledAt(liveClass); as when) {
+                  {{ when | date: 'dd/MM/yyyy HH:mm' }}
+                } @else {
+                  Data a definir
+                }
+              </span>
+
+              <a
+                [href]="liveClass.meetLink || '#'"
+                target="_blank"
+                rel="noopener"
+                class="btn btn-primary btn-block"
+              >
+                Acessar Aula <app-icon name="external-link" [size]="15" />
+              </a>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div>
+      <strong class="section-title">Aulas finalizadas</strong>
+      @if (finishedClasses().length === 0) {
+        <div class="empty-box">
+          <span class="empty-box-icon"><app-icon name="check-circle" [size]="22" /></span>
+          <p>Você ainda não possui aulas finalizadas no seu histórico.</p>
+        </div>
+      } @else {
+        <div class="live-grid">
+          @for (liveClass of finishedClasses(); track liveClass.id) {
+            <div class="card live-card muted-card">
+              <div class="live-header">
+                <span class="live-icon"><app-icon name="video" [size]="18" /></span>
+                <app-status-badge
+                  [label]="liveStatusLabel(liveClass.status)"
+                  [tone]="toneForStatus(liveStatusLabel(liveClass.status))"
+                />
+              </div>
+              <strong>{{ liveClass.title }}</strong>
+              @if (liveClass.description) {
+                <p>{{ liveClass.description }}</p>
+              }
+              <span class="meta">
+                <app-icon name="user" [size]="14" /> {{ teacherName(liveClass) }}
+              </span>
+              <span class="meta">
+                <app-icon name="calendar" [size]="14" />
+                @if (scheduledAt(liveClass); as when) {
+                  {{ when | date: 'dd/MM/yyyy HH:mm' }}
+                } @else {
+                  Data a definir
+                }
+              </span>
+              <button type="button" class="btn btn-secondary btn-block" disabled>
+                <app-icon name="check-circle" [size]="15" /> Aula finalizada
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

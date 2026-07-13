@@ -1,0 +1,93 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Meu Progresso</h1>
+      <p>Acompanhe sua evolução, sua sequência de estudos e sua trilha de aprendizado.</p>
+    </div>
+  </div>
+
+  <div class="card overall-card">
+    <div class="overall-header">
+      <span>Progresso geral</span>
+      <strong>{{ progress().overallProgress }}%</strong>
+    </div>
+    <app-progress-bar [value]="progress().overallProgress" [height]="8" />
+    <span class="hint">Faltam {{ progress().totalModules - progress().modulesCompleted }} módulo(s) para concluir sua trilha.</span>
+  </div>
+
+  <div class="stat-grid">
+    <div class="card mini-stat">
+      <span class="mini-icon"><app-icon name="book" [size]="18" /></span>
+      <strong>{{ progress().modulesCompleted }}/{{ progress().totalModules }}</strong>
+      <span>Módulos concluídos</span>
+    </div>
+    <div class="card mini-stat">
+      <span class="mini-icon"><app-icon name="video" [size]="18" /></span>
+      <strong>{{ progress().lessonsWatched }}/{{ progress().totalLessons }}</strong>
+      <span>Aulas assistidas</span>
+    </div>
+    <div class="card mini-stat">
+      <span class="mini-icon"><app-icon name="clipboard" [size]="18" /></span>
+      <strong>{{ progress().tasksSubmitted }}/{{ progress().totalTasks }}</strong>
+      <span>Tarefas entregues</span>
+    </div>
+  </div>
+
+  <div class="grid-two">
+    <div class="card">
+      <strong class="section-title">Sua trilha de aprendizado</strong>
+      <ul class="trilha">
+        @for (step of progress().trilha; track step.name) {
+          <li [class]="'status-' + step.status">
+            <span class="dot">
+              @switch (step.status) {
+                @case ('concluido') { <app-icon name="check-circle" [size]="16" /> }
+                @case ('atual') { <span class="pulse"></span> }
+                @default { <app-icon name="lock" [size]="13" /> }
+              }
+            </span>
+            <div>
+              <strong>{{ step.name }}</strong>
+              <span>
+                @switch (step.status) {
+                  @case ('concluido') { Concluído }
+                  @case ('atual') { Em andamento }
+                  @default { Bloqueado }
+                }
+              </span>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong class="section-title">Sequência de estudos</strong>
+      <div class="streak">
+        <span class="streak-icon"><app-icon name="flame" [size]="26" /></span>
+        <div>
+          <strong>{{ progress().streakDays }} dias</strong>
+          <span>Estudando sem interrupções</span>
+        </div>
+      </div>
+
+      <strong class="section-title conquests-title">Conquistas recentes</strong>
+      @if (progress().achievements.length) {
+        <ul class="achievements">
+          @for (achievement of progress().achievements; track achievement.title) {
+            <li>
+              <span class="achievement-icon"><app-icon [name]="achievement.icon" [size]="18" /></span>
+              <div>
+                <strong>{{ achievement.title }}</strong>
+                <span>{{ achievement.description }}</span>
+              </div>
+              <span class="date">{{ achievement.date }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty-copy">Continue estudando para desbloquear conquistas!</p>
+      }
+    </div>
+  </div>
+</div>

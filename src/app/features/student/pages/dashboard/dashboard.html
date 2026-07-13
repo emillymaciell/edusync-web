@@ -1,0 +1,62 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Bem-vindo(a) de volta, {{ user()?.name }}!</h1>
+      <p>Você já completou {{ progress().overallProgress }}% da sua trilha. Continue firme, cada passo conta.</p>
+    </div>
+  </div>
+
+  <div class="grid-top">
+    <div class="card progress-card">
+      <span class="label">Seu progresso</span>
+      <strong class="big-number">{{ progress().overallProgress }}%</strong>
+      <app-progress-bar [value]="progress().overallProgress" [height]="8" />
+      <span class="module-tag">Módulo atual: <strong>{{ progress().trilha[progress().modulesCompleted]?.name || 'Concluído' }}</strong></span>
+    </div>
+
+    <div class="card next-class-card">
+      @if (nextLiveClass(); as liveClass) {
+        <span class="label"><app-icon name="calendar" [size]="15" /> Próxima aula ao vivo</span>
+        <strong>{{ liveClass.title }}</strong>
+        <span class="meta">
+          <app-icon name="clock" [size]="14" />
+          @if (scheduledAt(liveClass); as when) {
+            {{ when | date: 'dd/MM/yyyy HH:mm' }}
+          } @else {
+            Data a definir
+          }
+        </span>
+        <a [href]="liveClass.meetLink || '#'" target="_blank" rel="noopener" class="btn btn-primary btn-block">
+          Acessar Aula <app-icon name="arrow-right" [size]="16" />
+        </a>
+      } @else {
+        <span class="label"><app-icon name="calendar" [size]="15" /> Próxima aula ao vivo</span>
+        <p class="empty-copy">Nenhuma aula ao vivo agendada no momento.</p>
+      }
+    </div>
+  </div>
+
+  <div class="grid-bottom">
+    <div class="card list-card">
+      <div class="list-card-header">
+        <strong>Tarefas pendentes</strong>
+        <a routerLink="/student/atividades">Ver todas <app-icon name="chevron-right" [size]="14" /></a>
+      </div>
+      @if (pendingTasks().length) {
+        <ul>
+          @for (task of pendingTasks(); track task.id) {
+            <li>
+              <div>
+                <strong>{{ task.title }}</strong>
+                <span>Prazo: {{ formatDueDate(task.dueDate) }}</span>
+              </div>
+              <app-status-badge [label]="statusLabel[task.status]" [tone]="toneForStatus(task.status)" />
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty-copy">Nenhuma tarefa pendente. Você está em dia! 🎉</p>
+      }
+    </div>
+  </div>
+</div>
