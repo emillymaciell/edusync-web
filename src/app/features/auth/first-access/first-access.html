@@ -1,0 +1,63 @@
+<div class="first-access">
+  <app-theme-toggle class="floating-toggle" />
+
+  <div class="first-access-card">
+    <div class="brand">
+      <img src="assets/edusync-logo.png" alt="EduSync" />
+      <span>EduSync</span>
+    </div>
+
+    <div class="icon-badge">
+      <app-icon name="shield" [size]="22" />
+    </div>
+
+    <h1>Atualize sua Senha de Acesso</h1>
+    <p class="subtitle">
+      Por segurança, você precisa definir uma nova senha antes de acessar a plataforma.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="first-access-form" novalidate>
+      <div class="field">
+        <label for="currentPassword">Senha atual</label>
+        <input
+          id="currentPassword"
+          type="password"
+          class="input"
+          [class.invalid]="submitted() && form.controls.currentPassword.invalid"
+          formControlName="currentPassword"
+          placeholder="Informe a senha recebida"
+          autocomplete="current-password"
+        />
+        @if (submitted() && form.controls.currentPassword.invalid) {
+          <span class="error">Informe sua senha atual.</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="newPassword">Nova senha</label>
+        <input
+          id="newPassword"
+          type="password"
+          class="input"
+          [class.invalid]="submitted() && form.controls.newPassword.invalid"
+          formControlName="newPassword"
+          placeholder="Mínimo de 8 caracteres"
+          autocomplete="new-password"
+        />
+        @if (submitted() && form.controls.newPassword.hasError('required')) {
+          <span class="error">Informe a nova senha.</span>
+        } @else if (submitted() && form.controls.newPassword.hasError('minlength')) {
+          <span class="error">A nova senha deve ter pelo menos 8 caracteres.</span>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <span class="spinner"></span> Atualizando...
+        } @else {
+          Atualizar senha e continuar
+        }
+      </button>
+    </form>
+  </div>
+</div>

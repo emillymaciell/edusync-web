@@ -1,0 +1,81 @@
+<div class="login">
+  <app-theme-toggle class="floating-toggle" />
+
+  <section class="hero">
+    <div class="hero-inner">
+      <a routerLink="/" class="back-link">
+        <app-icon name="chevron-left" [size]="16" />
+        <span>Voltar ao início</span>
+      </a>
+
+      <a routerLink="/" class="hero-brand">
+        <img src="assets/edusync-logo.png" alt="EduSync" />
+        <span>EduSync</span>
+      </a>
+
+      <span class="eyebrow"><app-icon name="sparkles" [size]="14" /> Tecnologia a serviço de quem inspira </span>
+      <h1>A plataforma EdTech que provisiona professores e personaliza o ensino.</h1>
+      <p>
+        O admin provisiona a plataforma e cria bases visuais por matéria. O professor escolhe sua área e ganha um
+        espaço sob medida. O aluno recebe uma experiência simples e intuitiva para aprender.
+      </p>
+
+      <ul class="hero-list">
+        <li><app-icon name="layers" [size]="16" /> Bases visuais por área de ensino</li>
+        <li><app-icon name="book" [size]="16" /> Espaço do professor adaptado à matéria</li>
+        <li><app-icon name="users" [size]="16" /> Área do aluno leve, intuitiva e sem fricção</li>
+        <li><app-icon name="sparkles" [size]="16" /> IA para gerar aulas e entender dificuldades</li>
+      </ul>
+
+      <p class="hero-footer">Uma plataforma. Três experiências. Um só objetivo: aprender melhor.</p>
+    </div>
+  </section>
+
+  <section class="form-side">
+    <div class="form-card">
+      <h2>Bem-vindo de volta</h2>
+      <p class="subtitle">Entre na sua conta para continuar.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="login-form" novalidate>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            type="email"
+            class="input"
+            [class.invalid]="submitted() && form.controls.email.invalid"
+            formControlName="email"
+            placeholder="voce@edusync.ai"
+            autocomplete="email"
+          />
+          @if (submitted() && form.controls.email.invalid) {
+            <span class="error">Informe um e-mail válido.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="password">Senha</label>
+          <input
+            id="password"
+            type="password"
+            class="input"
+            [class.invalid]="submitted() && form.controls.password.invalid"
+            formControlName="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="spinner"></span> Entrando...
+          } @else {
+            Entrar
+          }
+        </button>
+      </form>
+
+      <p class="switch-auth">É professor e ainda não tem conta? <a routerLink="/signup">Solicitar acesso</a></p>
+    </div>
+  </section>
+</div>

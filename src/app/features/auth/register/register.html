@@ -1,0 +1,179 @@
+<div class="register">
+  <app-theme-toggle class="floating-toggle" />
+
+  <section class="hero">
+    <div class="hero-inner">
+      <a routerLink="/" class="back-link">
+        <app-icon name="chevron-left" [size]="16" />
+        <span>Voltar ao início</span>
+      </a>
+
+      <a routerLink="/" class="hero-brand">
+        <img src="assets/edusync-logo.png" alt="EduSync" />
+        <span>EduSync</span>
+      </a>
+
+      <span class="eyebrow"><app-icon name="video" [size]="14" /> Exclusivo para professores</span>
+      <h1>Solicite seu acesso e leve seu ensino para o próximo nível.</h1>
+      <p>
+        A EduSync é provisionada pelo Admin: alunos nunca se cadastram sozinhos. Escolha sua área de ensino,
+        envie sua solicitação como professor e, assim que for aprovada, ganhe um espaço sob medida.
+      </p>
+
+      <ul class="hero-list">
+        <li><app-icon name="check-circle" [size]="16" /> Sem cartão de crédito para começar</li>
+        <li><app-icon name="check-circle" [size]="16" /> Espaço personalizado por área de ensino</li>
+        <li><app-icon name="check-circle" [size]="16" /> IA para gerar aulas e acompanhar o progresso</li>
+      </ul>
+
+      <p class="hero-footer">Uma plataforma. Três experiências. Um só objetivo: aprender melhor.</p>
+    </div>
+  </section>
+
+  <section class="form-side">
+    <div class="form-card">
+      @if (!requestSent()) {
+        <h2>Solicitar acesso</h2>
+        <p class="subtitle">Cadastro exclusivo para professores. Alunos são cadastrados pelo seu professor.</p>
+
+        <form [formGroup]="registerForm" (ngSubmit)="submit()" class="register-form" novalidate>
+          <div class="field">
+            <span class="field-label">Matéria</span>
+            <p class="field-hint">Selecione a disciplina que você leciona.</p>
+            <input type="hidden" formControlName="subjectId" />
+
+            @if (subjectsLoading()) {
+              <div class="subjects-state"><span class="spinner"></span> Carregando matérias...</div>
+            } @else if (subjectsError()) {
+              <div class="subjects-state subjects-state-error">
+                <p>{{ subjectsError() }}</p>
+                <button type="button" class="btn btn-secondary btn-sm" (click)="loadSubjects()">
+                  <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+                </button>
+              </div>
+            } @else {
+              <div class="subject-grid" role="listbox" aria-label="Matérias disponíveis">
+                @for (subject of subjects(); track subject.id) {
+                  <button
+                    type="button"
+                    class="subject-card"
+                    role="option"
+                    [attr.aria-selected]="registerForm.controls.subjectId.value === subject.id"
+                    [class.selected]="registerForm.controls.subjectId.value === subject.id"
+                    (click)="selectSubject(subject.id)"
+                  >
+                    <div class="color-indicator" [style.background-color]="subject.color"></div>
+                    <div class="subject-card-content">
+                      <strong>{{ subject.name }}</strong>
+                      <span>{{ subject.teachingArea }}</span>
+                    </div>
+                  </button>
+                }
+              </div>
+            }
+
+            @if (submitted() && registerForm.controls.subjectId.invalid) {
+              <span class="error">Selecione uma matéria para continuar.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="name">Nome completo</label>
+            <input
+              id="name"
+              type="text"
+              class="input"
+              [class.invalid]="submitted() && registerForm.controls.name.invalid"
+              formControlName="name"
+              placeholder="Seu nome"
+              autocomplete="name"
+            />
+            @if (submitted() && registerForm.controls.name.invalid) {
+              <span class="error">Informe seu nome completo.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input
+              id="email"
+              type="email"
+              class="input"
+              [class.invalid]="submitted() && registerForm.controls.email.invalid"
+              formControlName="email"
+              placeholder="voce@exemplo.com"
+              autocomplete="email"
+            />
+            @if (submitted() && registerForm.controls.email.invalid) {
+              <span class="error">Informe um e-mail válido.</span>
+            }
+          </div>
+
+          <div class="field">
+            <label for="password">Senha</label>
+            <input
+              id="password"
+              type="password"
+              class="input"
+              [class.invalid]="submitted() && registerForm.controls.password.invalid"
+              formControlName="password"
+              placeholder="Mínimo de 6 caracteres"
+              autocomplete="new-password"
+            />
+            @if (submitted() && registerForm.controls.password.invalid) {
+              <span class="error">A senha deve ter pelo menos 6 caracteres.</span>
+            }
+          </div>
+
+          <div class="consent-list">
+            <label class="checkbox-field">
+              <input type="checkbox" formControlName="acceptTerms" />
+              <span>
+                Li e concordo com os <a href="#" (click)="openPrivacyDialog($event)">Termos de Uso</a> e com a
+                <a href="#" (click)="openPrivacyDialog($event)">Política de Privacidade</a>, autorizando o tratamento
+                dos meus dados conforme a LGPD.
+              </span>
+            </label>
+
+            <label class="checkbox-field">
+              <input type="checkbox" formControlName="acceptMarketing" />
+              <span>Aceito receber novidades e comunicações por e-mail (opcional).</span>
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            [disabled]="!registerForm.controls.acceptTerms.value || isSubmitting()"
+          >
+            @if (isSubmitting()) {
+              <span class="spinner"></span> Enviando...
+            } @else {
+              Solicitar acesso
+            }
+          </button>
+
+          @if (!registerForm.controls.acceptTerms.value) {
+            <span class="hint-error">É necessário aceitar os termos para enviar sua solicitação.</span>
+          }
+        </form>
+
+        <p class="switch-auth">Já tem uma conta? <a routerLink="/login">Entrar</a></p>
+      } @else {
+        <div class="success-state">
+          <span class="success-icon"><app-icon name="check-circle" [size]="28" /></span>
+          <h2>Solicitação enviada!</h2>
+          <p>
+            Sua solicitação foi enviada e está em análise pelo administrador. Você receberá um aviso quando seu
+            cadastro for aprovado e poderá acessar a plataforma normalmente.
+          </p>
+          <a routerLink="/login" class="btn btn-primary btn-block">Ir para o login</a>
+        </div>
+      }
+    </div>
+  </section>
+</div>
+
+@if (showPrivacyDialog()) {
+  <app-privacy-policy-dialog (close)="closePrivacyDialog()" />
+}
