@@ -1,0 +1,128 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Olá, {{ user()?.name?.split(' ')?.[0] }}</h1>
+      <p>Seu espaço está pronto. Veja o resumo da turma e o que precisa de atenção.</p>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <a routerLink="/teacher/fabrica-de-aulas" class="quick-action">
+      <app-icon name="sparkles" [size]="18" />
+      <span>Gerar Aula com IA</span>
+    </a>
+    <a routerLink="/teacher/aulas-ao-vivo" class="quick-action">
+      <app-icon name="calendar" [size]="18" />
+      <span>Agendar Sessão</span>
+    </a>
+    <a routerLink="/teacher/alunos" class="quick-action">
+      <app-icon name="users" [size]="18" />
+      <span>Ver Alunos</span>
+    </a>
+    <a routerLink="/teacher/insights" class="quick-action danger">
+      <app-icon name="alert-triangle" [size]="18" />
+      <span>Alunos em risco</span>
+    </a>
+  </div>
+
+  @if (metricsError()) {
+    <div class="card metrics-error">
+      <p>{{ metricsError() }}</p>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="loadMetrics()">
+        <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+      </button>
+    </div>
+  } @else {
+    <div class="stat-grid" [class.loading]="metricsLoading()">
+      <div class="card mini-stat">
+        <span class="mini-icon" style="color:#2563eb; background:#dbeafe"><app-icon name="users" [size]="17" /></span>
+        <div><strong>{{ metrics()?.activeStudents ?? '—' }}</strong><span>Alunos ativos</span></div>
+      </div>
+      <div class="card mini-stat">
+        <span class="mini-icon" style="color:#b45309; background:#fef3c7"><app-icon name="clipboard" [size]="17" /></span>
+        <div><strong>{{ metrics()?.tasksToCorrect ?? '—' }}</strong><span>Tarefas para corrigir</span></div>
+      </div>
+      <div class="card mini-stat">
+        <span class="mini-icon" style="color:#1d4ed8; background:#dbeafe"><app-icon name="video" [size]="17" /></span>
+        <div><strong>{{ totalUpcomingClasses() }}</strong><span>Próximas aulas ao vivo</span></div>
+      </div>
+      <div class="card mini-stat">
+        <span class="mini-icon" style="color:#4f46e5; background:#eef2ff"><app-icon name="sparkles" [size]="17" /></span>
+        <div><strong>{{ metrics()?.aiAlerts ?? '—' }}</strong><span>Alertas gerados por IA</span></div>
+      </div>
+    </div>
+  }
+
+  <div class="grid-two">
+    <div class="card list-card">
+      <div class="list-card-header">
+        <strong>Alunos que precisam de atenção</strong>
+        <a routerLink="/teacher/alunos">Ver todos <app-icon name="chevron-right" [size]="14" /></a>
+      </div>
+      @if (studentsLoading()) {
+        <div class="list-loading"><span class="spinner"></span> Carregando alunos...</div>
+      } @else {
+        <ul>
+          @for (student of studentsNeedingAttention(); track student.id) {
+            <li>
+              <app-avatar [initials]="initialsFor(student.name)" [color]="colorFor(student.id)" [size]="36" />
+              <div class="student-copy">
+                <div class="row">
+                  <strong>{{ student.name }}</strong>
+                  <app-status-badge [label]="statusLabel[student.status]" [tone]="toneForStatus(statusLabel[student.status])" />
+                </div>
+                <span>{{ student.email }}</span>
+              </div>
+            </li>
+          } @empty {
+            <li class="empty-copy">Nenhum aluno precisando de atenção agora.</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="card list-card">
+      <div class="list-card-header">
+        <strong>Próximas aulas ao vivo</strong>
+        <a routerLink="/teacher/aulas-ao-vivo">Ver <app-icon name="chevron-right" [size]="14" /></a>
+      </div>
+      @if (upcomingClassesLoading()) {
+        <div class="list-loading"><span class="spinner"></span> Carregando aulas...</div>
+      } @else {
+        <ul class="live-list">
+          @for (liveClass of upcomingClasses(); track liveClass.id) {
+            <li>
+              <div class="live-row">
+                <strong>{{ liveClass.title }}</strong>
+                <app-status-badge
+                  [label]="liveStatusLabel(liveClass.status)"
+                  [tone]="toneForStatus(liveStatusLabel(liveClass.status))"
+                />
+              </div>
+              <span>
+                <app-icon name="calendar" [size]="13" />
+                @if (scheduledAt(liveClass); as when) {
+                  {{ when | date: 'dd/MM/yyyy HH:mm' }}
+                } @else {
+                  Data a definir
+                }
+                · {{ participantCount(liveClass) }} aluno(s)
+              </span>
+            </li>
+          } @empty {
+            <li class="empty-copy">Nenhuma aula ao vivo agendada.</li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+
+  <div class="ai-banner">
+    <span class="ai-icon"><app-icon name="sparkles" [size]="20" /></span>
+    <div class="ai-banner-copy">
+      <strong>A IA analisou o progresso dos seus alunos</strong>
+      <span>{{ metrics()?.aiAlerts ?? 0 }} alerta(s) gerado(s) para {{ studentsNeedingAttention().length }} aluno(s) que precisam de atenção. Veja recomendações personalizadas para cada um.</span>
+    </div>
+    <a routerLink="/teacher/insights" class="btn btn-secondary">Ver Insights IA <app-icon name="arrow-right" [size]="15" /></a>
+  </div>
+</div>

@@ -1,0 +1,108 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Insights IA</h1>
+      <p>Escolha um aluno para ver a análise de progresso e as recomendações geradas pela IA.</p>
+    </div>
+  </div>
+
+  <div class="insights-layout">
+    <div class="card student-list">
+      @if (studentsLoading()) {
+        <div class="list-loading"><span class="spinner"></span> Carregando alunos...</div>
+      } @else if (studentsError()) {
+        <div class="list-error">
+          <p>{{ studentsError() }}</p>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="loadStudents()">
+            <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+          </button>
+        </div>
+      } @else {
+        @for (student of students(); track student.id) {
+          <button
+            type="button"
+            class="student-item"
+            [class.active]="student.id === selectedStudentId()"
+            (click)="select(student.id)"
+          >
+            <app-avatar [initials]="initialsFor(student.name)" [color]="colorFor(student.id)" [size]="34" />
+            <span class="student-copy">
+              <strong>{{ student.name }}</strong>
+              <span>{{ student.learningLevel }}</span>
+            </span>
+            <app-status-badge [label]="statusLabel[student.status]" [tone]="toneForStatus(statusLabel[student.status])" />
+          </button>
+        } @empty {
+          <p class="empty-copy">Nenhum aluno vinculado à sua conta ainda.</p>
+        }
+      }
+    </div>
+
+    <div class="insight-panel">
+      @if (selectedStudent(); as student) {
+        <div class="card panel-header">
+          <app-avatar [initials]="initialsFor(student.name)" [color]="colorFor(student.id)" [size]="40" />
+          <div>
+            <strong>{{ student.name }}</strong>
+            <span>Nível: {{ student.learningLevel }}</span>
+          </div>
+        </div>
+
+        <div class="card trilha-card">
+          <strong class="section-title">Trilha de módulos</strong>
+          <div class="trilha-track">
+            @for (step of selectedTrilha(); track step.name) {
+              <div class="trilha-step" [class]="'status-' + step.status">
+                <span class="trilha-dot">
+                  @if (step.status === 'concluido') {
+                    <app-icon name="check-circle" [size]="13" />
+                  }
+                </span>
+                <span class="trilha-label">{{ step.name }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (insightLoading()) {
+          <div class="card insight-loading">
+            <span class="spinner big"></span>
+            <p>Consultando a análise de IA para {{ student.name.split(' ')[0] }}...</p>
+          </div>
+        } @else if (insightError()) {
+          <div class="card insight-error">
+            <p>{{ insightError() }}</p>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="retryInsight()">
+              <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+            </button>
+          </div>
+        } @else if (insight(); as ins) {
+          <div class="analysis-card">
+            <span class="analysis-icon"><app-icon name="sparkles" [size]="18" /></span>
+            <div>
+              <strong>Análise de Progresso com IA</strong>
+              <span class="updated">Status: {{ ins.status }} · Atualizada em {{ ins.updatedAt }}</span>
+              <p>{{ ins.analysis }}</p>
+            </div>
+          </div>
+
+          <div class="card recommendations-card">
+            <strong class="section-title"><app-icon name="star" [size]="15" /> Recomendações da IA</strong>
+            <ul>
+              @for (rec of ins.recommendations; track rec) {
+                <li (click)="executeRecommendation(rec)">
+                  <span>{{ rec }}</span>
+                  <app-icon name="external-link" [size]="15" />
+                </li>
+              }
+            </ul>
+          </div>
+        } @else {
+          <div class="card">
+            <p class="empty-copy">Ainda não há uma análise de IA gerada para este aluno.</p>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

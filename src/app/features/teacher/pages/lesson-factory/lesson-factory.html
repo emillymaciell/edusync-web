@@ -1,0 +1,91 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Fábrica de Aulas</h1>
+      <p>Informe um tópico e a IA gera exercícios hiperpersonalizados com base no perfil do aluno.</p>
+    </div>
+  </div>
+
+  <div class="factory-layout">
+    <div class="card form-panel">
+      <span class="field-label">Aluno de referência</span>
+      <div class="student-picker">
+        @if (studentsLoading()) {
+          <div class="list-loading"><span class="spinner"></span> Carregando alunos...</div>
+        } @else if (studentsError()) {
+          <div class="list-error">
+            <p>{{ studentsError() }}</p>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="loadStudents()">
+              <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+            </button>
+          </div>
+        } @else {
+          @for (student of students(); track student.id) {
+            <button
+              type="button"
+              class="student-option"
+              [class.active]="student.id === selectedStudentId()"
+              (click)="selectStudent(student.id)"
+            >
+              <app-avatar [initials]="initialsFor(student.name)" [color]="colorFor(student.id)" [size]="32" />
+              <span class="copy">
+                <strong>{{ student.name }}</strong>
+                <span>{{ learningLevelLabel(student.learningLevel) }}</span>
+              </span>
+            </button>
+          } @empty {
+            <p class="empty-copy">Nenhum aluno vinculado à sua conta ainda.</p>
+          }
+        }
+      </div>
+
+      <div class="field">
+        <label for="topic">Tópico da aula</label>
+        <input id="topic" class="input" placeholder="Ex.: Inglês — tema principal" [ngModel]="topic()" (ngModelChange)="topic.set($event)" />
+      </div>
+
+      <div class="field">
+        <label for="notes">Observações (opcional)</label>
+        <textarea id="notes" class="textarea" rows="4" placeholder="Ex.: reforçar pontos onde o aluno teve dificuldade." [ngModel]="notes()" (ngModelChange)="notes.set($event)"></textarea>
+      </div>
+
+      <button type="button" class="btn btn-primary btn-block" [disabled]="!canGenerate" (click)="generate()">
+        @if (isGenerating()) {
+          <span class="spinner"></span> Gerando...
+        } @else {
+          <app-icon name="sparkles" [size]="16" /> Gerar Aula com IA
+        }
+      </button>
+    </div>
+
+    <div class="card result-panel">
+      @if (isGenerating()) {
+        <div class="placeholder">
+          <span class="spinner big"></span>
+          <p>A IA está criando a aula perfeita...</p>
+        </div>
+      } @else if (generatedLesson(); as lesson) {
+        <div class="lesson-result">
+          <div class="result-header">
+            <span class="json-tag"><app-icon name="code" [size]="13" /> resposta da IA</span>
+          </div>
+          <pre class="generated-content">{{ lesson.generatedContent }}</pre>
+          <div class="result-actions">
+            <button type="button" class="btn btn-primary" (click)="saveLesson()" [disabled]="isSaving() || !topic().trim()">
+              @if (isSaving()) {
+                <span class="spinner"></span> Salvando...
+              } @else {
+                <app-icon name="check-circle" [size]="15" /> Salvar Aula
+              }
+            </button>
+          </div>
+        </div>
+      } @else {
+        <div class="placeholder">
+          <span class="placeholder-icon"><app-icon name="sparkles" [size]="26" /></span>
+          <p>Preencha o tópico e escolha um aluno para gerar exercícios personalizados.</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

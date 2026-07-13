@@ -1,0 +1,304 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Tarefas</h1>
+      <p>Crie, atribua e acompanhe as atividades dos seus alunos.</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openModal()">
+      <app-icon name="plus" [size]="16" /> Nova Tarefa
+    </button>
+  </div>
+
+  @if (generatedTaskPreview(); as preview) {
+    <div class="card preview-panel">
+      <div id="content-to-print" class="content-to-print">
+        <div class="preview-header">
+          <div>
+            <h2>Revisão da Tarefa Gerada por IA</h2>
+            <div class="preview-meta">
+              <span class="preview-tag"><app-icon name="sparkles" [size]="14" /> Tema: <strong>{{ preview.tema }}</strong></span>
+              <span class="preview-tag"><app-icon name="users" [size]="14" /> Nível: <strong>{{ learningLevelLabel(preview.nivel) }}</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="questions-list">
+          @for (questao of preview.questoes; track $index) {
+            <article class="question-card">
+              <p class="question-stem">
+                <span class="question-number">{{ $index + 1 }}.</span>
+                <strong>{{ questao.enunciado }}</strong>
+              </p>
+
+              <ul class="options-list">
+                @for (opcao of questao.opcoes; track opcao) {
+                  <li class="option-item" [class.correct]="opcao === questao.respostaCorreta">
+                    <span class="option-radio" aria-hidden="true"></span>
+                    <span>{{ opcao }}</span>
+                  </li>
+                }
+              </ul>
+
+              <div class="answer-block">
+                <div class="answer-row">
+                  <app-icon name="check-circle" [size]="15" />
+                  <span><strong>Gabarito:</strong> {{ questao.respostaCorreta }}</span>
+                </div>
+                <p class="explanation"><strong>Explicação:</strong> {{ questao.explicacao }}</p>
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+
+      <div class="preview-actions no-print">
+        <button type="button" class="btn btn-secondary" (click)="discardPreview()" [disabled]="isSaving()">
+          <app-icon name="trash" [size]="15" /> Descartar
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveTask()" [disabled]="isSaving()">
+          @if (isSaving()) {
+            <span class="spinner"></span> Salvando...
+          } @else {
+            <app-icon name="check-circle" [size]="15" /> Salvar Tarefa
+          }
+        </button>
+      </div>
+    </div>
+  } @else {
+    @if (tasksLoading()) {
+      <div class="list-state"><span class="spinner"></span> Carregando tarefas...</div>
+    } @else if (tasksError()) {
+      <div class="list-state list-error">
+        <p>{{ tasksError() }}</p>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="loadTasks()">
+          <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+        </button>
+      </div>
+    } @else {
+      <div class="task-list">
+        @for (task of tasks(); track task.id) {
+          <div class="card task-card" [class.expanded]="expandedTaskId === task.id">
+            <button type="button" class="task-card-toggle" (click)="toggleTask(task.id)">
+              <div class="task-info">
+                <div class="task-title-row">
+                  <strong>{{ task.title }}</strong>
+                  <app-status-badge
+                    [label]="statusLabel[task.status]"
+                    [tone]="toneForStatus(task.status)"
+                  />
+                </div>
+                <div class="task-meta">
+                  <span><app-icon name="users" [size]="14" /> {{ task.studentName }}</span>
+                  <span><app-icon name="calendar" [size]="14" /> Entrega: {{ formatDueDate(task.dueDate) }}</span>
+                </div>
+              </div>
+              <span class="task-chevron" aria-hidden="true">
+                <app-icon
+                  name="chevron-down"
+                  [size]="16"
+                  [class.chevron-flip]="expandedTaskId === task.id"
+                />
+              </span>
+            </button>
+
+            @if (expandedTaskId === task.id) {
+              <div class="task-card-body">
+                @if (hasStudentSubmission(task)) {
+                  @if (asQuiz(task.description); as quiz) {
+                    @if (quiz.tema) {
+                      <p class="correction-theme"><strong>Tema:</strong> {{ quiz.tema }}</p>
+                    }
+
+                    <div class="correction-quiz">
+                      @for (questao of quiz.questoes; track $index; let questionIndex = $index) {
+                        <article class="correction-question">
+                          <p class="correction-stem">
+                            <span class="question-number">{{ questionIndex + 1 }}.</span>
+                            <strong>{{ questao.enunciado }}</strong>
+                            @if (getStudentAnswerForQuestion(task.studentAnswer, questionIndex)) {
+                              @if (isQuestionCorrect(questao, task.studentAnswer, questionIndex)) {
+                                <span class="question-result correct">
+                                  <app-icon name="check-circle" [size]="15" /> Correta
+                                </span>
+                              } @else {
+                                <span class="question-result wrong">
+                                  <app-icon name="close" [size]="15" /> Incorreta
+                                </span>
+                              }
+                            }
+                          </p>
+
+                          <div class="grade-options">
+                            @for (opcao of questao.opcoes; track opcao) {
+                              <div
+                                class="grade-option"
+                                [class.correct-selected]="getOptionClass(opcao, questao, task.studentAnswer, questionIndex) === 'correct-selected'"
+                                [class.wrong-selected]="getOptionClass(opcao, questao, task.studentAnswer, questionIndex) === 'wrong-selected'"
+                                [class.correct-answer]="getOptionClass(opcao, questao, task.studentAnswer, questionIndex) === 'correct-answer'"
+                                [class.selected]="getOptionClass(opcao, questao, task.studentAnswer, questionIndex) === 'selected'"
+                              >
+                                <span class="grade-option-marker" aria-hidden="true"></span>
+                                <span class="grade-option-text">{{ opcao }}</span>
+                                @if (
+                                  getStudentAnswerForQuestion(task.studentAnswer, questionIndex) === opcao &&
+                                  isQuestionCorrect(questao, task.studentAnswer, questionIndex)
+                                ) {
+                                  <app-icon name="check-circle" [size]="16" class="grade-option-icon" />
+                                }
+                                @if (
+                                  getStudentAnswerForQuestion(task.studentAnswer, questionIndex) === opcao &&
+                                  !isQuestionCorrect(questao, task.studentAnswer, questionIndex)
+                                ) {
+                                  <app-icon name="close" [size]="16" class="grade-option-icon" />
+                                }
+                              </div>
+                            }
+                          </div>
+
+                          @if (
+                            getStudentAnswerForQuestion(task.studentAnswer, questionIndex) &&
+                            !isQuestionCorrect(questao, task.studentAnswer, questionIndex)
+                          ) {
+                            <p class="correction-hint">
+                              <strong>Gabarito:</strong> {{ questao.respostaCorreta }}
+                            </p>
+                          }
+                        </article>
+                      }
+                    </div>
+                  } @else {
+                    <div class="correction-text">
+                      <h3 class="correction-label">Enunciado</h3>
+                      <div class="correction-prompt" [innerHTML]="task.description | cleanLessonText"></div>
+
+                      <h3 class="correction-label">Resposta do aluno</h3>
+                      <blockquote class="student-answer-block">
+                        {{ task.studentAnswer || 'Resposta enviada (conteúdo indisponível).' }}
+                      </blockquote>
+                    </div>
+                  }
+                } @else {
+                  <p class="correction-empty">O aluno ainda não enviou esta atividade.</p>
+                }
+
+                @if ((task.status === 'ENTREGUE' || task.status === 'ENVIADA') && hasStudentSubmission(task)) {
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-block release-btn"
+                    (click)="releaseCorrection(task)"
+                    [disabled]="isReleasing()"
+                  >
+                    @if (isReleasing()) {
+                      <span class="spinner"></span> Liberando...
+                    } @else {
+                      <app-icon name="send" [size]="15" /> Liberar Correção ao Aluno
+                    }
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        } @empty {
+          <div class="list-state">
+            <p>Nenhuma tarefa cadastrada ainda. Clique em "Nova Tarefa" para começar.</p>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+
+@if (showModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <strong>Nova Tarefa com IA</strong>
+          <p>Selecione um aluno e informe o assunto para gerar exercícios de múltipla escolha.</p>
+        </div>
+        <button
+          type="button"
+          class="modal-close"
+          (click)="closeModal()"
+          [disabled]="isGenerating()"
+          aria-label="Fechar"
+        >
+          <app-icon name="close" [size]="16" />
+        </button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="generateExercises()" class="modal-form" novalidate>
+        <div class="field">
+          <label for="task-student">Aluno</label>
+          @if (studentsLoading()) {
+            <div class="field-hint"><span class="spinner"></span> Carregando alunos...</div>
+          } @else if (studentsError()) {
+            <div class="field-error">
+              <p>{{ studentsError() }}</p>
+              <button type="button" class="btn btn-secondary btn-sm" (click)="loadStudents()">
+                <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+              </button>
+            </div>
+          } @else {
+            <select
+              id="task-student"
+              class="input"
+              formControlName="studentId"
+              [class.invalid]="formSubmitted() && form.controls.studentId.invalid"
+              (change)="onStudentChange()"
+            >
+              <option [ngValue]="null" disabled>Selecione um aluno</option>
+              @for (student of students(); track student.id) {
+                <option [ngValue]="student.id">{{ student.name }}</option>
+              }
+            </select>
+            @if (formSubmitted() && form.controls.studentId.invalid) {
+              <span class="error">Selecione o aluno de referência.</span>
+            }
+          }
+        </div>
+
+        <div class="field">
+          <label for="task-assunto">Assunto</label>
+          <input
+            id="task-assunto"
+            type="text"
+            class="input"
+            formControlName="assunto"
+            [class.invalid]="formSubmitted() && form.controls.assunto.invalid"
+            placeholder="Ex.: Verbos Irregulares"
+            autocomplete="off"
+          />
+          @if (formSubmitted() && form.controls.assunto.invalid) {
+            <span class="error">Informe o assunto da tarefa.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="task-nivel">Nível do aluno</label>
+          <input
+            id="task-nivel"
+            type="text"
+            class="input"
+            formControlName="nivelAluno"
+            placeholder="Selecione um aluno acima"
+            readonly
+          />
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()" [disabled]="isGenerating()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="isGenerating() || studentsLoading() || !!studentsError()">
+            @if (isGenerating()) {
+              <span class="spinner"></span> Gerando...
+            } @else {
+              <app-icon name="sparkles" [size]="15" /> Gerar Exercícios com IA
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

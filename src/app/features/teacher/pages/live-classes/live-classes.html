@@ -1,0 +1,199 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Aulas ao Vivo</h1>
+      <p>Agende transmissões e acompanhe suas aulas ao vivo com os alunos.</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="toggleForm()">
+      <app-icon name="plus" [size]="16" /> Agendar Aula ao Vivo
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card" novalidate>
+      <div class="form-grid">
+        <div class="field span-2">
+          <label for="title">Título</label>
+          <input
+            id="title"
+            class="input"
+            formControlName="title"
+            [class.invalid]="submitted() && form.controls.title.invalid"
+            placeholder="Ex.: Conversação Avançada"
+          />
+          @if (submitted() && form.controls.title.invalid) {
+            <span class="error">Informe o título da aula.</span>
+          }
+        </div>
+        <div class="field">
+          <label for="date">Data</label>
+          <input
+            id="date"
+            type="date"
+            class="input"
+            formControlName="date"
+            [class.invalid]="submitted() && form.controls.date.invalid"
+          />
+          @if (submitted() && form.controls.date.invalid) {
+            <span class="error">Informe a data.</span>
+          }
+        </div>
+        <div class="field">
+          <label for="time">Horário</label>
+          <input
+            id="time"
+            type="time"
+            class="input"
+            formControlName="time"
+            [class.invalid]="submitted() && form.controls.time.invalid"
+          />
+          @if (submitted() && form.controls.time.invalid) {
+            <span class="error">Informe o horário.</span>
+          }
+        </div>
+      </div>
+      <div class="field">
+        <label for="description">Descrição</label>
+        <textarea
+          id="description"
+          class="textarea"
+          rows="3"
+          formControlName="description"
+          [class.invalid]="submitted() && form.controls.description.invalid"
+          placeholder="Sobre o que é essa aula ao vivo?"
+        ></textarea>
+        @if (submitted() && form.controls.description.invalid) {
+          <span class="error">Informe a descrição.</span>
+        }
+      </div>
+      <div class="field">
+        <label>Alunos participantes</label>
+        @if (!students().length) {
+          <p class="hint">Nenhum aluno cadastrado. Cadastre alunos antes de agendar.</p>
+        } @else {
+          <div class="student-picker" [class.invalid]="submitted() && selectedStudentIds().length === 0">
+            @for (student of students(); track student.id) {
+              <button
+                type="button"
+                class="student-chip"
+                [class.selected]="isStudentSelected(student.id)"
+                (click)="toggleStudent(student.id)"
+              >
+                {{ student.name }}
+              </button>
+            }
+          </div>
+        }
+        @if (submitted() && selectedStudentIds().length === 0) {
+          <span class="error">Selecione ao menos um aluno.</span>
+        }
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="toggleForm()" [disabled]="isSubmitting()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting()">
+          <app-icon name="calendar" [size]="15" />
+          {{ isSubmitting() ? 'Agendando…' : 'Agendar' }}
+        </button>
+      </div>
+    </form>
+  }
+
+  <div>
+    <strong class="section-title">Próximas aulas</strong>
+    @if (upcoming().length === 0) {
+      <div class="empty-box">
+        <span class="empty-box-icon"><app-icon name="video" [size]="22" /></span>
+        <p>Nenhuma aula agendada no momento. Clique no botão acima para agendar sua primeira transmissão.</p>
+      </div>
+    } @else {
+      <div class="live-grid">
+        @for (liveClass of upcoming(); track liveClass.id) {
+          <div class="card live-card">
+            <div class="live-header">
+              <span class="live-icon"><app-icon name="video" [size]="16" /></span>
+              <app-status-badge [label]="liveClass.status" [tone]="toneForStatus(liveClass.status)" />
+            </div>
+            <strong>{{ liveClass.title }}</strong>
+            <p>{{ liveClass.description }}</p>
+            <span class="meta"><app-icon name="calendar" [size]="13" /> {{ liveClass.date }} <app-icon name="clock" [size]="13" /> {{ liveClass.time }}</span>
+
+            @if (liveClass.participants.length) {
+              <div class="participants">
+                @for (p of liveClass.participants; track p.name) {
+                  <app-avatar [initials]="p.initials" [color]="p.color" [size]="26" />
+                }
+                <span>{{ liveClass.participants.length }} aluno(s)</span>
+              </div>
+            }
+
+            <div class="card-actions">
+              <a [href]="liveClass.meetLink" target="_blank" rel="noopener" class="btn btn-primary btn-block btn-sm">
+                <app-icon name="external-link" [size]="14" /> Iniciar transmissão
+              </a>
+              <button type="button" class="btn btn-danger btn-block btn-sm" (click)="openCancelModal(liveClass.id)">
+                <app-icon name="ban" [size]="14" /> Cancelar aula
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div>
+    <strong class="section-title">Aulas finalizadas</strong>
+    @if (finished().length === 0) {
+      <div class="empty-box">
+        <span class="empty-box-icon"><app-icon name="check-circle" [size]="22" /></span>
+        <p>Você ainda não possui aulas finalizadas no seu histórico.</p>
+      </div>
+    } @else {
+      <div class="live-grid">
+        @for (liveClass of finished(); track liveClass.id) {
+          <div class="card live-card muted-card">
+            <div class="live-header">
+              <span class="live-icon"><app-icon name="video" [size]="16" /></span>
+              <app-status-badge [label]="liveClass.status" [tone]="toneForStatus(liveClass.status)" />
+            </div>
+            <strong>{{ liveClass.title }}</strong>
+            <p>{{ liveClass.description }}</p>
+            <span class="meta"><app-icon name="calendar" [size]="13" /> {{ liveClass.date }} <app-icon name="clock" [size]="13" /> {{ liveClass.time }}</span>
+            <button type="button" class="btn btn-secondary btn-block btn-sm" disabled>
+              <app-icon name="check-circle" [size]="14" /> Aula finalizada
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  @if (showCancelModal()) {
+    <div class="modal-backdrop" (click)="closeCancelModal()">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cancel-class-title" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <strong id="cancel-class-title" class="modal-title-danger">Cancelar Aula</strong>
+            <p>Tem certeza que deseja cancelar esta aula? Esta ação não poderá ser desfeita e os alunos serão notificados.</p>
+          </div>
+          <button
+            type="button"
+            class="modal-close"
+            (click)="closeCancelModal()"
+            [disabled]="isCanceling()"
+            aria-label="Fechar"
+          >
+            <app-icon name="close" [size]="16" />
+          </button>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeCancelModal()" [disabled]="isCanceling()">
+            Voltar
+          </button>
+          <button type="button" class="btn btn-danger" (click)="confirmCancel()" [disabled]="isCanceling()">
+            {{ isCanceling() ? 'Cancelando…' : 'Sim, cancelar aula' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

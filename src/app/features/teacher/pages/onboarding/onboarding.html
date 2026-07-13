@@ -1,0 +1,53 @@
+<header class="onboarding-topbar">
+  <a routerLink="/" class="brand">
+    <img src="assets/edusync-logo.png" alt="EduSync" />
+    <span>EduSync</span>
+  </a>
+  @if (user(); as u) {
+    <app-avatar [initials]="u.avatarInitials" [color]="u.avatarColor" [size]="34" />
+  }
+</header>
+
+<main class="onboarding-main">
+  <span class="eyebrow"><app-icon name="sparkles" [size]="14" /> Vamos personalizar seu espaço</span>
+  <h1>Escolha sua Área de Ensino</h1>
+  <p>Selecione a base visual que combina com o que você ensina. Todo o seu painel será adaptado a essa matéria — cores, ícones e ferramentas.</p>
+
+  @if (loading()) {
+    <div class="subjects-state"><span class="spinner"></span> Carregando matérias...</div>
+  } @else if (error()) {
+    <div class="subjects-state subjects-state-error">
+      <p>{{ error() }}</p>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="loadSubjects()">
+        <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+      </button>
+    </div>
+  } @else {
+    <div class="subject-grid">
+      @for (subject of subjects(); track subject.id) {
+        <button
+          type="button"
+          class="card subject-card"
+          [disabled]="selectingId() !== null"
+          (click)="select(subject)"
+        >
+          <span class="subject-icon" [style.background]="subject.color + '1a'" [style.color]="subject.color">
+            <app-icon [name]="subjectIconFor(subject.icon)" [size]="22" />
+          </span>
+          <strong>{{ subject.name }}</strong>
+          <span class="area">{{ subject.area }}</span>
+          <p>{{ subject.description }}</p>
+          <span class="select-link">
+            @if (selectingId() === subject.id) {
+              Salvando...
+            } @else {
+              Selecionar <app-icon name="arrow-right" [size]="14" />
+            }
+          </span>
+        </button>
+      } @empty {
+        <p class="empty-copy">Nenhuma matéria ativa disponível no momento.</p>
+      }
+    </div>
+  }
+</main>

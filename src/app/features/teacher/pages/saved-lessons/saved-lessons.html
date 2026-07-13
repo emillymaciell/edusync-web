@@ -1,0 +1,152 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Aulas Salvas</h1>
+      <p>Suas aulas geradas pela IA na Fábrica de Aulas. Revise, exporte em PDF ou remova.</p>
+    </div>
+    <a routerLink="/teacher/fabrica-de-aulas" class="btn btn-primary">
+      <app-icon name="sparkles" [size]="16" /> Nova Aula
+    </a>
+  </div>
+
+  @if (lessonsLoading()) {
+    <div class="list-state"><span class="spinner"></span> Carregando aulas...</div>
+  } @else if (lessonsError()) {
+    <div class="list-state list-error">
+      <p>{{ lessonsError() }}</p>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="loadLessons()">
+        <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+      </button>
+    </div>
+  } @else {
+    <div class="lessons-list">
+      @for (lesson of lessons(); track lesson.id) {
+        <article
+          class="lesson-card"
+          [class.expanded]="isExpanded(lesson.id)"
+          [class.exporting]="exportingLessonId() === lesson.id"
+        >
+          <div class="lesson-card-header">
+            <app-avatar
+              [initials]="initialsFor(lesson.studentName)"
+              [color]="colorForName(lesson.studentName)"
+              [size]="44"
+            />
+
+            <div class="lesson-card-info">
+              <h2 class="lesson-topic">{{ lesson.topic }}</h2>
+              <p class="lesson-meta">
+                {{ lesson.studentName }} · {{ sectionCountLabel(lesson) }} · {{ formatCreatedAt(lesson.createdAt) }}
+              </p>
+            </div>
+
+            <div class="lesson-card-actions">
+              <button type="button" class="btn btn-toggle" (click)="toggleExpand(lesson.id)">
+                @if (isExpanded(lesson.id)) {
+                  Ocultar
+                  <span class="chevron-flip"><app-icon name="chevron-down" [size]="14" /></span>
+                } @else {
+                  Ver
+                  <app-icon name="chevron-down" [size]="14" />
+                }
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-pdf"
+                (click)="exportToPDF(lesson)"
+                [disabled]="isExporting()"
+              >
+                @if (isExporting() && exportingLessonId() === lesson.id) {
+                  <span class="spinner"></span>
+                } @else {
+                  <app-icon name="file" [size]="14" />
+                }
+                PDF
+              </button>
+
+              <button
+                type="button"
+                class="icon-btn danger"
+                title="Excluir aula"
+                (click)="openDeleteConfirm(lesson)"
+                [disabled]="isDeleting()"
+              >
+                <app-icon name="trash" [size]="15" />
+              </button>
+            </div>
+          </div>
+
+          @if (isExpanded(lesson.id)) {
+            <div class="lesson-card-body">
+              <div [id]="'content-to-print-' + lesson.id" class="content-to-print">
+                <div class="pdf-export-only pdf-banner">
+                  <strong>EduSync — Plano de Aula</strong>
+                  <span>{{ lesson.topic }} · Gerado por IA</span>
+                </div>
+
+                <div class="pdf-export-only pdf-meta">
+                  <p>Aluno de referência: {{ lesson.studentName }}</p>
+                  <p>Salvo em: {{ formatCreatedAt(lesson.createdAt) }}</p>
+                </div>
+
+                @for (section of parseSections(lesson); track section.title) {
+                  <section class="lesson-section-block">
+                    <h3 class="section-title" [innerHTML]="section.title | cleanLessonText"></h3>
+                    @if (section.body) {
+                      <p class="section-body" [innerHTML]="section.body | cleanLessonText"></p>
+                    }
+                    @if (section.focus) {
+                      <div class="focus-box">
+                        <app-icon name="sparkles" [size]="14" />
+                        <span>Foco personalizado: {{ section.focus }}</span>
+                      </div>
+                    }
+                  </section>
+                } @empty {
+                  <pre class="lesson-content-fallback">{{ contentFallback(lesson) }}</pre>
+                }
+              </div>
+            </div>
+          }
+        </article>
+      } @empty {
+        <div class="empty-wrap">
+          <app-empty-state
+            icon="file"
+            title="Nenhuma aula salva"
+            description="Gere uma aula na Fábrica de Aulas e salve para vê-la aqui."
+          />
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (deleteTarget(); as lesson) {
+  <div class="modal-backdrop" (click)="closeDeleteConfirm()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <strong>Excluir aula?</strong>
+          <p>
+            A aula <strong>{{ lesson.topic }}</strong> de <strong>{{ lesson.studentName }}</strong> será removida
+            permanentemente.
+          </p>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="closeDeleteConfirm()" [disabled]="isDeleting()">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary danger-btn" (click)="confirmDelete()" [disabled]="isDeleting()">
+          @if (isDeleting()) {
+            <span class="spinner"></span> Excluindo...
+          } @else {
+            <app-icon name="trash" [size]="15" /> Excluir
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,146 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Meus Alunos</h1>
+      <p>Acompanhe o status e o nível de cada aluno vinculado à sua conta.</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openAddModal()">
+      <app-icon name="plus" [size]="16" /> Adicionar Aluno
+    </button>
+  </div>
+
+  <div class="toolbar">
+    <div class="tabs">
+      @for (filter of filters; track filter.key) {
+        <button
+          type="button"
+          class="tab"
+          [class.active]="activeFilter() === filter.key"
+          (click)="activeFilter.set(filter.key)"
+        >
+          {{ filter.label }} <span class="count">{{ countFor(filter.key) }}</span>
+        </button>
+      }
+    </div>
+    <div class="search-box">
+      <app-icon name="search" [size]="16" />
+      <input
+        type="search"
+        class="input"
+        placeholder="Buscar por nome ou e-mail..."
+        [value]="search()"
+        (input)="search.set($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  <div class="card table-card">
+    @if (studentsLoading()) {
+      <div class="list-loading"><span class="spinner"></span> Carregando alunos...</div>
+    } @else if (studentsError()) {
+      <div class="list-error">
+        <p>{{ studentsError() }}</p>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="loadStudents()">
+          <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+        </button>
+      </div>
+    } @else {
+      <div class="table-grid header-row">
+        <span>Aluno</span>
+        <span>Nível</span>
+        <span>Status</span>
+        <span></span>
+      </div>
+
+      @for (student of filteredStudents(); track student.id) {
+        <button type="button" class="table-grid data-row" (click)="openInsight(student.id)">
+          <span class="student-cell">
+            <app-avatar [initials]="initialsFor(student.name)" [color]="colorFor(student.id)" [size]="34" />
+            <span class="student-copy">
+              <strong>{{ student.name }}</strong>
+              <span>{{ student.email }}</span>
+            </span>
+          </span>
+          <span class="muted">{{ learningLevelLabel(student.learningLevel) }}</span>
+          <span><app-status-badge [label]="statusLabel[student.status]" [tone]="toneForStatus(statusLabel[student.status])" /></span>
+          <span class="chevron"><app-icon name="chevron-right" [size]="16" /></span>
+        </button>
+      } @empty {
+        <app-empty-state icon="users" title="Nenhum aluno encontrado" description="Ajuste os filtros ou o termo de busca." />
+      }
+    }
+  </div>
+</div>
+
+@if (showAddModal()) {
+  <div class="modal-backdrop" (click)="closeAddModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <strong>Adicionar Novo Aluno</strong>
+          <p>Informe os dados básicos para provisionar o acesso do aluno.</p>
+        </div>
+        <button
+          type="button"
+          class="modal-close"
+          (click)="closeAddModal()"
+          [disabled]="isAddingStudent()"
+          aria-label="Fechar"
+        >
+          <app-icon name="close" [size]="16" />
+        </button>
+      </div>
+
+      <form [formGroup]="addStudentForm" (ngSubmit)="submitAddStudent()" class="modal-form" novalidate>
+        <div class="field">
+          <label for="student-name">Nome completo</label>
+          <input
+            id="student-name"
+            type="text"
+            class="input"
+            [class.invalid]="addSubmitted() && addStudentForm.controls.name.invalid"
+            formControlName="name"
+            placeholder="Nome do aluno"
+            autocomplete="off"
+          />
+          @if (addSubmitted() && addStudentForm.controls.name.invalid) {
+            <span class="error">Informe o nome completo do aluno.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="student-email">E-mail</label>
+          <input
+            id="student-email"
+            type="email"
+            class="input"
+            [class.invalid]="addSubmitted() && addStudentForm.controls.email.invalid"
+            formControlName="email"
+            placeholder="aluno@exemplo.com"
+            autocomplete="off"
+          />
+          @if (addSubmitted() && addStudentForm.controls.email.invalid) {
+            <span class="error">Informe um e-mail válido.</span>
+          }
+        </div>
+
+        <p class="form-hint">
+          O aluno receberá a senha padrão 'edusync123' e deverá alterá-la no primeiro acesso.
+        </p>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeAddModal()" [disabled]="isAddingStudent()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="isAddingStudent()">
+            @if (isAddingStudent()) {
+              <span class="spinner"></span> Cadastrando...
+            } @else {
+              <app-icon name="plus" [size]="15" /> Cadastrar Aluno
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
