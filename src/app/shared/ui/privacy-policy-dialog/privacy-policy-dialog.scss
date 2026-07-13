@@ -1,0 +1,131 @@
+:host {
+  display: block;
+}
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 19, 35, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 200;
+}
+
+.dialog-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: min(640px, 90vh);
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  z-index: 1;
+}
+
+.close-btn:hover {
+  background: var(--color-neutral-bg);
+  color: var(--color-text);
+}
+
+.dialog-body {
+  padding: 28px 28px 8px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dialog-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.dialog-body h2 {
+  font-size: 1.25rem;
+  margin-bottom: 6px;
+}
+
+.intro {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}
+
+.policy-section {
+  padding: 14px 0;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.policy-section h3 {
+  font-size: 0.9375rem;
+}
+
+.policy-section p {
+  color: var(--color-text-muted);
+  font-size: 0.8438rem;
+  line-height: 1.6;
+}
+
+.rights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.rights-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8438rem;
+  color: var(--color-text);
+}
+
+.right-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.dialog-footer {
+  padding: 16px 28px 24px;
+  border-top: 1px solid var(--color-border);
+}

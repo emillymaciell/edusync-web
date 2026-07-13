@@ -1,0 +1,86 @@
+<div class="shell">
+  <aside class="sidebar" [class.open]="sidebarOpen()">
+    <div class="brand">
+      <img [src]="logoSrc()" alt="EduSync" class="brand-logo" />
+      <div class="brand-copy">
+        <strong>{{ brandName() }}</strong>
+        @if (portalLabel()) {
+          <span>{{ portalLabel() }}</span>
+        }
+      </div>
+      <button type="button" class="icon-btn mobile-only" (click)="closeSidebar()" aria-label="Fechar menu">
+        <app-icon name="close" [size]="18" />
+      </button>
+    </div>
+
+    <nav class="nav">
+      @for (item of navItems(); track item.route) {
+        <a
+          class="nav-link"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: !!item.exact }"
+          (click)="closeSidebar()"
+        >
+          <app-icon [name]="item.icon" [size]="19" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      @if (user(); as u) {
+        <app-avatar [initials]="u.avatarInitials" [color]="u.avatarColor" [size]="38" />
+        <div class="user-copy">
+          <strong>{{ u.name }}</strong>
+          <span>
+            @if (u.role === 'teacher') {
+              Professor · {{ u.subjectName || 'Geral' }}
+            } @else {
+              {{ u.title }}
+            }
+          </span>
+        </div>
+      }
+      <app-theme-toggle />
+      <button type="button" class="icon-btn" (click)="logout()" aria-label="Sair" title="Sair">
+        <app-icon name="logout" [size]="18" />
+      </button>
+    </div>
+  </aside>
+
+  @if (sidebarOpen()) {
+    <button type="button" class="overlay" (click)="closeSidebar()" aria-label="Fechar menu"></button>
+  }
+
+  <div class="main" [class.has-bottom-nav]="useBottomNav()">
+    <header class="topbar">
+      <button type="button" class="icon-btn" (click)="toggleSidebar()" aria-label="Abrir menu">
+        <app-icon name="menu" [size]="20" />
+      </button>
+      <div class="topbar-brand">
+        <img [src]="logoSrc()" alt="EduSync" />
+        <strong>{{ brandName() }}</strong>
+      </div>
+      <app-theme-toggle />
+      @if (user(); as u) {
+        <app-avatar [initials]="u.avatarInitials" [color]="u.avatarColor" [size]="32" />
+      }
+    </header>
+
+    <div class="content">
+      <router-outlet />
+    </div>
+  </div>
+
+  @if (useBottomNav()) {
+    <nav class="bottom-tabs">
+      @for (item of bottomNavItems(); track item.route) {
+        <a class="tab" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: !!item.exact }">
+          <app-icon [name]="item.icon" [size]="20" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  }
+</div>

@@ -1,0 +1,42 @@
+<div class="dialog-backdrop" (click)="onClose()">
+  <div class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="privacy-title" (click)="$event.stopPropagation()">
+    <button type="button" class="close-btn" (click)="onClose()" aria-label="Fechar">
+      <app-icon name="close" [size]="18" />
+    </button>
+
+    <div class="dialog-body">
+      <span class="dialog-icon"><app-icon name="shield" [size]="20" /></span>
+
+      <h2 id="privacy-title">Política de Privacidade</h2>
+      <p class="intro">Em conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018).</p>
+
+      @for (section of sections; track section.title) {
+        <section class="policy-section">
+          <h3>{{ section.title }}</h3>
+          <p>{{ section.paragraph }}</p>
+        </section>
+      }
+
+      <section class="policy-section">
+        <h3>4. Seus direitos como titular</h3>
+        <ul class="rights-list">
+          @for (right of rights; track right.label) {
+            <li>
+              <span class="right-icon"><app-icon [name]="right.icon" [size]="16" /></span>
+              <span>{{ right.label }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <section class="policy-section">
+        <h3>{{ contact.title }}</h3>
+        <p>{{ contact.paragraph }}</p>
+      </section>
+    </div>
+
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-primary btn-block" (click)="onClose()">Entendi</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="toast-viewport">
+  @for (toast of toasts(); track toast.id) {
+    <div class="toast" [class]="'toast-' + toast.type" role="status">
+      <span class="toast-icon"><app-icon [name]="iconFor(toast.type)" [size]="18" /></span>
+      <p>{{ toast.message }}</p>
+      <button type="button" class="toast-close" (click)="dismiss(toast.id)" aria-label="Fechar aviso">
+        <app-icon name="close" [size]="14" />
+      </button>
+    </div>
+  }
+</div>
