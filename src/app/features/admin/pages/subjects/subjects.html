@@ -1,0 +1,113 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Bases Visuais (Matérias)</h1>
+      <p>Crie os modelos de matéria que os professores selecionam ao entrar na plataforma.</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="list-state"><span class="spinner"></span> Carregando matérias...</div>
+  } @else if (error()) {
+    <div class="list-state list-error">
+      <p>{{ error() }}</p>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="loadSubjects()">
+        <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+      </button>
+    </div>
+  } @else {
+    <div class="subjects-layout">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="card form-panel" novalidate>
+        <strong class="panel-title">Configurar nova base</strong>
+        <span class="panel-subtitle">Defina nome, cor de destaque e ícone da matéria.</span>
+
+        <div class="field">
+          <label for="name">Nome da matéria</label>
+          <input id="name" class="input" formControlName="name" placeholder="Ex.: Espanhol, Física, História..." />
+        </div>
+
+        <div class="field">
+          <label>Cor de destaque</label>
+          <div class="color-row">
+            @for (color of colorOptions; track color) {
+              <button
+                type="button"
+                class="color-swatch"
+                [style.background]="color"
+                [class.selected]="form.controls.color.value === color"
+                (click)="selectColor(color)"
+                [attr.aria-label]="'Selecionar cor ' + color"
+              >
+                @if (form.controls.color.value === color) {
+                  <app-icon name="check-circle" [size]="14" />
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Ícone da base</label>
+          <div class="icon-row">
+            @for (option of iconOptions; track option.key) {
+              <button
+                type="button"
+                class="icon-option"
+                [class.selected]="form.controls.icon.value === option.key"
+                (click)="selectIcon(option.key)"
+              >
+                <app-icon [name]="option.icon" [size]="18" />
+                <span>{{ option.label }}</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="description">Descrição (opcional)</label>
+          <textarea id="description" class="textarea" rows="2" formControlName="description" placeholder="Sobre o que é essa base visual?"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Pré-visualização</label>
+          <div class="preview-card">
+            <span class="preview-icon" [style.background]="form.controls.color.value + '1a'" [style.color]="form.controls.color.value">
+              <app-icon [name]="subjectIconFor(form.controls.icon.value)" [size]="20" />
+            </span>
+            <div>
+              <strong>{{ form.controls.name.value || 'Nova matéria' }}</strong>
+              <span>{{ previewArea }}</span>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="isSubmitting()">
+          @if (isSubmitting()) {
+            <span class="spinner"></span> Criando...
+          } @else {
+            <app-icon name="plus" [size]="16" /> Criar base visual
+          }
+        </button>
+      </form>
+
+      <div class="subject-grid">
+        @for (subject of subjects(); track subject.id) {
+          <div class="card subject-card">
+            <div class="subject-card-header">
+              <span class="subject-icon" [style.background]="subject.color + '1a'" [style.color]="subject.color">
+                <app-icon [name]="subjectIconFor(subject.icon)" [size]="20" />
+              </span>
+              <app-status-badge [label]="subject.status" [tone]="toneForStatus(subject.status)" />
+            </div>
+            <strong>{{ subject.name }}</strong>
+            <span class="area">{{ subject.area }}</span>
+            <p>{{ subject.description }}</p>
+            <span class="teacher-count"><app-icon name="users" [size]="13" /> {{ subject.teacherCount }} professor(es) usando esta base</span>
+          </div>
+        } @empty {
+          <div class="card empty-card">Nenhuma base visual cadastrada ainda.</div>
+        }
+      </div>
+    </div>
+  }
+</div>

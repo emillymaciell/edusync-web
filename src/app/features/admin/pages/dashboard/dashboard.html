@@ -1,0 +1,83 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Painel Geral</h1>
+      <p>Visão consolidada da infraestrutura: professores provisionados e bases visuais disponíveis.</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="list-state"><span class="spinner"></span> Carregando painel...</div>
+  } @else if (error()) {
+    <div class="list-state list-error">
+      <p>{{ error() }}</p>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="loadDashboard()">
+        <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+      </button>
+    </div>
+  } @else {
+    <div class="stat-grid">
+      <app-stat-card icon="users" [value]="stats().activeTeachers" label="Professores ativos" tint="#2563eb" tintBg="#dbeafe" />
+      <app-stat-card icon="user" [value]="stats().pendingTeachers" label="Cadastros pendentes" tint="#b45309" tintBg="#fef3c7" />
+      <app-stat-card icon="layers" [value]="stats().activeSubjects" label="Bases visuais ativas" tint="#4f46e5" tintBg="#eef2ff" />
+      <app-stat-card icon="graduation-cap" [value]="stats().totalStudents" label="Alunos na plataforma" tint="#15803d" tintBg="#dcfce7" />
+    </div>
+
+    <div class="grid-two">
+      <div class="card list-card">
+        <div class="list-card-header">
+          <strong>Professores cadastrados</strong>
+          <a routerLink="/admin/professores">Gerenciar <app-icon name="chevron-right" [size]="14" /></a>
+        </div>
+        <ul>
+          @for (teacher of recentTeachers(); track teacher.id) {
+            <li>
+              <app-avatar [initials]="teacher.avatarInitials" [color]="teacher.avatarColor" [size]="36" />
+              <div class="copy">
+                <strong>{{ teacher.name }}</strong>
+                <span>{{ teacher.subjectName }}</span>
+              </div>
+              <app-status-badge [label]="teacher.status" [tone]="toneForStatus(teacher.status)" />
+            </li>
+          } @empty {
+            <li class="empty-copy">Nenhum professor cadastrado ainda.</li>
+          }
+        </ul>
+      </div>
+
+      <div class="card list-card">
+        <div class="list-card-header">
+          <strong>Bases visuais</strong>
+          <a routerLink="/admin/materias">Configurar <app-icon name="chevron-right" [size]="14" /></a>
+        </div>
+        <ul>
+          @for (subject of subjects(); track subject.id) {
+            <li>
+              <span class="subject-icon" [style.background]="subject.color + '1a'" [style.color]="subject.color">
+                <app-icon [name]="subjectIconFor(subject.icon)" [size]="16" />
+              </span>
+              <div class="copy">
+                <strong>{{ subject.name }}</strong>
+                <span>{{ subject.area }}</span>
+              </div>
+              <span class="teacher-count">{{ subject.teacherCount }} prof.</span>
+            </li>
+          } @empty {
+            <li class="empty-copy">Nenhuma base visual cadastrada ainda.</li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    @if (pendingTeachers().length) {
+      <div class="pending-banner">
+        <span class="pending-icon"><app-icon name="users" [size]="20" /></span>
+        <div>
+          <strong>Provisione novos professores</strong>
+          <span>{{ pendingTeachers().length }} cadastro(s) aguardando aprovação. Aprove para liberar o acesso.</span>
+        </div>
+        <a routerLink="/admin/professores" class="btn btn-secondary">Ver cadastros <app-icon name="arrow-right" [size]="15" /></a>
+      </div>
+    }
+  }
+</div>

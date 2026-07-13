@@ -1,0 +1,105 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Gestão de Professores</h1>
+      <p>Professores cadastrados na plataforma, suas áreas e status de aprovação.</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="toggleForm()">
+      <app-icon name="plus" [size]="16" /> Provisionar professor
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label for="name">Nome completo</label>
+          <input id="name" class="input" formControlName="name" placeholder="Ex.: Camila Souza" />
+        </div>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input id="email" type="email" class="input" formControlName="email" placeholder="professor@edusync.ai" />
+        </div>
+      </div>
+      <p class="hint">
+        <app-icon name="alert-triangle" [size]="13" />
+        Professores se cadastram pela página de registro. Use este atalho apenas como referência.
+      </p>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="toggleForm()">Cancelar</button>
+        <button type="submit" class="btn btn-primary"><app-icon name="users" [size]="15" /> Entendi</button>
+      </div>
+    </form>
+  }
+
+  <div class="search-box">
+    <app-icon name="search" [size]="16" />
+    <input
+      type="search"
+      class="input"
+      placeholder="Buscar por nome ou área..."
+      [value]="search()"
+      (input)="search.set($any($event.target).value)"
+    />
+  </div>
+
+  @if (loading()) {
+    <div class="list-state"><span class="spinner"></span> Carregando professores...</div>
+  } @else if (error()) {
+    <div class="list-state list-error">
+      <p>{{ error() }}</p>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="loadTeachers()">
+        <app-icon name="arrow-right" [size]="14" /> Tentar novamente
+      </button>
+    </div>
+  } @else {
+    <div class="card table-card">
+      <div class="table-grid header-row">
+        <span>Professor</span>
+        <span>Área escolhida</span>
+        <span>Status</span>
+      </div>
+
+      @for (teacher of filteredTeachers(); track teacher.id) {
+        <div class="table-grid data-row">
+          <span class="teacher-cell">
+            <app-avatar [initials]="teacher.avatarInitials" [color]="teacher.avatarColor" [size]="34" />
+            <span class="copy">
+              <strong>{{ teacher.name }}</strong>
+              <span>{{ teacher.email }}</span>
+            </span>
+          </span>
+          <span class="muted">
+            @if (teacher.subjectName || teacher.subjectCategory) {
+              {{ teacher.subjectName || '—' }}
+              @if (teacher.subjectCategory) {
+                - {{ teacher.subjectCategory }}
+              }
+            } @else {
+              —
+            }
+          </span>
+          <span class="status-cell">
+            <app-status-badge [label]="teacher.status" [tone]="toneForStatus(teacher.status)" />
+            @if (teacher.status === 'Pendente') {
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                [disabled]="isSubmitting() && reviewingId() === teacher.id"
+                (click)="confirmApproval(teacher.id)"
+              >
+                @if (isSubmitting() && reviewingId() === teacher.id) {
+                  Aprovando...
+                } @else {
+                  Aprovar
+                }
+              </button>
+            }
+          </span>
+        </div>
+      } @empty {
+        <app-empty-state icon="users" title="Nenhum professor encontrado" description="Ajuste o termo de busca ou aguarde novos cadastros." />
+      }
+    </div>
+  }
+</div>
