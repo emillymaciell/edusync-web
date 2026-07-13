@@ -1,0 +1,219 @@
+<header class="nav">
+  <div class="nav-inner">
+    <a routerLink="/" class="nav-brand">
+      <img src="assets/edusync-logo.png" alt="EduSync" />
+      <span>EduSync</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#recursos">Recursos</a>
+      <a href="#experiencias">Experiências</a>
+      <a href="#depoimentos">Depoimentos</a>
+    </nav>
+    <div class="nav-actions">
+      <app-theme-toggle />
+      <div class="nav-cta">
+        <a routerLink="/login" class="btn btn-ghost btn-sm">Entrar</a>
+        <a routerLink="/signup" class="btn btn-primary btn-sm">Sou professor</a>
+      </div>
+      <button
+        type="button"
+        class="hamburger-btn"
+        (click)="toggleMobileMenu()"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-label="Abrir menu"
+      >
+        <app-icon [name]="mobileMenuOpen() ? 'close' : 'menu'" [size]="22" />
+      </button>
+    </div>
+  </div>
+
+  @if (mobileMenuOpen()) {
+    <nav class="mobile-menu">
+      <a href="#recursos" (click)="closeMobileMenu()">Recursos</a>
+      <a href="#experiencias" (click)="closeMobileMenu()">Experiências</a>
+      <a href="#depoimentos" (click)="closeMobileMenu()">Depoimentos</a>
+      <div class="mobile-menu-actions">
+        <a routerLink="/login" class="btn btn-secondary btn-block" (click)="closeMobileMenu()">Entrar</a>
+        <a routerLink="/signup" class="btn btn-primary btn-block" (click)="closeMobileMenu()">Sou professor</a>
+      </div>
+    </nav>
+  }
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow"><app-icon name="sparkles" [size]="14" /> Tecnologia a serviço de quem inspira </span>
+      <h1>A plataforma EdTech que provisiona professores e personaliza o ensino</h1>
+      <p>Uma plataforma. Três experiências. O admin provisiona, o professor cria com apoio de IA e o aluno aprende em um espaço simples e intuitivo.</p>
+      <div class="hero-actions">
+        <a routerLink="/login" class="btn btn-primary">Começar agora <app-icon name="arrow-right" [size]="16" /></a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="mock-window">
+        <div class="mock-topbar">
+          <span class="traffic red"></span>
+          <span class="traffic yellow"></span>
+          <span class="traffic green"></span>
+        </div>
+        <img
+          class="mock-screenshot"
+          src="assets/print.png"
+          alt="Dashboard do EduSync — Bases Visuais (Matérias)"
+          width="1600"
+          height="1000"
+          decoding="async"
+          style="image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0);"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="recursos">
+    <h2>Tudo que sua operação de ensino precisa</h2>
+    <p class="section-lead">Do provisionamento à sala de aula, cada camada foi pensada para reduzir fricção.</p>
+    <div class="features-grid">
+      @for (feature of features; track feature.title) {
+        <div class="feature-card card">
+          <span class="feature-icon"><app-icon [name]="feature.icon" [size]="20" /></span>
+          <strong>{{ feature.title }}</strong>
+          <p>{{ feature.description }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="experiences" id="experiencias">
+    <h2>Três experiências, uma só plataforma</h2>
+    <p class="section-lead">Explore como cada perfil vive a EduSync no dia a dia.</p>
+
+    <div
+      class="experience-carousel"
+      (mouseenter)="stopExperienceAutoPlay()"
+      (mouseleave)="startExperienceAutoPlay()"
+    >
+      <div class="carousel-viewport">
+        <div
+          class="carousel-track"
+          [style.transform]="'translateX(-' + activeExperience() * 100 + '%)'"
+        >
+          @for (exp of experiences; track exp.role) {
+            <div class="carousel-slide">
+              <div class="experience-card card">
+                <span class="experience-role"><app-icon [name]="exp.icon" [size]="14" /> {{ exp.role }}</span>
+                <h3>{{ exp.title }}</h3>
+                <p>{{ exp.description }}</p>
+                <ul class="experience-bullets">
+                  @for (bullet of exp.bullets; track bullet) {
+                    <li><app-icon name="check-circle" [size]="16" /> {{ bullet }}</li>
+                  }
+                </ul>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="dots">
+      @for (exp of experiences; track exp.role; let i = $index) {
+        <button
+          type="button"
+          class="dot"
+          [class.active]="i === activeExperience()"
+          (click)="selectExperience(i)"
+          [attr.aria-label]="'Ver experiência ' + exp.role"
+        ></button>
+      }
+    </div>
+  </section>
+
+  <section class="testimonials" id="depoimentos">
+    <h2>Quem usa, recomenda</h2>
+    <div
+      class="testimonial-wrap"
+      (mouseenter)="stopTestimonialAutoPlay()"
+      (mouseleave)="startTestimonialAutoPlay()"
+    >
+      <button type="button" class="carousel-btn" (click)="prevTestimonial()" aria-label="Depoimento anterior">
+        <app-icon name="chevron-left" [size]="18" />
+      </button>
+
+      <div class="carousel-viewport testimonial-viewport">
+        <div
+          class="carousel-track"
+          [style.transform]="'translateX(-' + activeTestimonial() * 100 + '%)'"
+        >
+          @for (t of testimonials; track t.name) {
+            <div class="carousel-slide">
+              <div class="testimonial-card card">
+                <span class="quote-mark">"</span>
+                <div class="stars">★★★★★</div>
+                <p>"{{ t.quote }}"</p>
+                <strong>{{ t.name }}</strong>
+                <span>{{ t.role }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <button type="button" class="carousel-btn" (click)="nextTestimonial()" aria-label="Próximo depoimento">
+        <app-icon name="chevron-right" [size]="18" />
+      </button>
+    </div>
+    <div class="dots">
+      @for (t of testimonials; track t.name; let i = $index) {
+        <button
+          type="button"
+          class="dot"
+          [class.active]="i === activeTestimonial()"
+          (click)="selectTestimonial(i)"
+          [attr.aria-label]="'Ver depoimento ' + (i + 1)"
+        ></button>
+      }
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Pronto para transformar seu ensino?</h2>
+    <p>Comece a explorar a EduSync agora mesmo e veja como é simples provisionar, ensinar e aprender.</p>
+    <a routerLink="/login" class="btn btn-secondary">Entrar na plataforma <app-icon name="arrow-right" [size]="16" /></a>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <a routerLink="/" class="nav-brand">
+      <img src="assets/edusync-logo.png" alt="EduSync" />
+      <span>EduSync</span>
+    </a>
+    <div class="footer-links">
+      <a href="#" (click)="openPrivacyDialog($event)">Política de Privacidade</a>
+      <a href="#" (click)="openPrivacyDialog($event)">Termos de Uso</a>
+      <a href="#" (click)="openPrivacyDialog($event)">Cookies</a>
+    </div>
+    <span class="footer-copy">© 2026 EduSync</span>
+  </div>
+</footer>
+
+@if (cookieBannerVisible()) {
+  <div class="cookie-banner">
+    <p>
+      Usamos cookies para manter você conectado e melhorar sua experiência. Ao continuar, você concorda com o uso de
+      cookies conforme a nossa
+      <button type="button" class="privacy-link" (click)="openPrivacyDialog($event)">
+        Política de Privacidade
+      </button>.
+    </p>
+    <div class="cookie-actions">
+      <button type="button" class="btn btn-secondary btn-sm" (click)="acceptCookies()">Apenas essenciais</button>
+      <button type="button" class="btn btn-primary btn-sm" (click)="acceptCookies()">Aceitar todos</button>
+    </div>
+  </div>
+}
+
+@if (showPrivacyDialog()) {
+  <app-privacy-policy-dialog (close)="closePrivacyDialog()" />
+}
