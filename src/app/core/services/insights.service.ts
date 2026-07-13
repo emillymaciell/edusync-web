@@ -11,4 +11,11 @@ export class InsightsService {
   getStudentInsight(studentId: number): Observable<StudentInsightResponse> {
     return this.http.get<StudentInsightResponse>(`${API_BASE_URL}/api/insights/student/${studentId}`);
   }
+
+  refreshStudentInsight(studentId: number): Observable<StudentInsightResponse> {
+    return this.http.post<StudentInsightResponse>(
+      `${API_BASE_URL}/api/insights/${studentId}/refresh`,
+      null,
+    );
+  }
 }

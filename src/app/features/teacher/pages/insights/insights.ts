@@ -59,6 +59,7 @@ export class Insights {
   readonly insight = signal<StudentInsightResponse | null>(null);
   readonly insightLoading = signal(false);
   readonly insightError = signal<string | null>(null);
+  readonly refreshLoading = signal(false);
 
   constructor() {
     this.loadStudents();
@@ -74,6 +75,26 @@ export class Insights {
 
   retryInsight(): void {
     this.fetchInsight(this.selectedStudentId());
+  }
+
+  refreshAnalysis(): void {
+    const studentId = this.selectedStudentId();
+    if (studentId === null || this.refreshLoading()) return;
+
+    this.refreshLoading.set(true);
+    this.insightError.set(null);
+
+    this.insightsService.refreshStudentInsight(studentId).subscribe({
+      next: (response) => {
+        this.insight.set(response);
+        this.refreshLoading.set(false);
+        this.toastService.success('Análise atualizada com sucesso.');
+      },
+      error: () => {
+        this.refreshLoading.set(false);
+        this.toastService.error('Não foi possível regenerar a análise de IA.');
+      },
+    });
   }
 
   executeRecommendation(recommendation: string): void {
@@ -122,11 +143,13 @@ export class Insights {
     if (studentId === null) {
       this.insight.set(null);
       this.insightError.set(null);
+      this.refreshLoading.set(false);
       return;
     }
 
     this.insightLoading.set(true);
     this.insightError.set(null);
+    this.refreshLoading.set(false);
 
     this.insightsService.getStudentInsight(studentId).subscribe({
       next: (response) => {
