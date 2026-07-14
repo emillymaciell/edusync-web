@@ -5,7 +5,7 @@ import { NavItem } from '../../shared/layout/nav-item.model';
 const ADMIN_NAV: NavItem[] = [
   { label: 'Painel Geral', icon: 'home', route: '/admin', exact: true },
   { label: 'Gestão de Professores', icon: 'users', route: '/admin/professores' },
-  { label: 'Bases Visuais (Matérias)', icon: 'layers', route: '/admin/materias' },
+  { label: 'Matérias', icon: 'layers', route: '/admin/materias' },
 ];
 
 @Component({

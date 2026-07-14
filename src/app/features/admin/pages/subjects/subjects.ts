@@ -98,11 +98,11 @@ export class Subjects implements OnInit {
         next: () => {
           this.isSubmitting.set(false);
           this.form.reset({ name: '', description: '', color: COLOR_OPTIONS[0], icon: 'languages' });
-          this.toast.success('Base visual criada com sucesso.');
+          this.toast.success('Matéria criada com sucesso.');
         },
         error: () => {
           this.isSubmitting.set(false);
-          this.toast.error('Não foi possível criar a base visual.');
+          this.toast.error('Não foi possível criar a matéria.');
         },
       });
   }

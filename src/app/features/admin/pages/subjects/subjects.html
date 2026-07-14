@@ -1,7 +1,7 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1>Bases Visuais (Matérias)</h1>
+      <h1>Matérias</h1>
       <p>Crie os modelos de matéria que os professores selecionam ao entrar na plataforma.</p>
     </div>
   </div>
@@ -18,7 +18,7 @@
   } @else {
     <div class="subjects-layout">
       <form [formGroup]="form" (ngSubmit)="submit()" class="card form-panel" novalidate>
-        <strong class="panel-title">Configurar nova base</strong>
+        <strong class="panel-title">Configurar nova matéria</strong>
         <span class="panel-subtitle">Defina nome, cor de destaque e ícone da matéria.</span>
 
         <div class="field">
@@ -47,7 +47,7 @@
         </div>
 
         <div class="field">
-          <label>Ícone da base</label>
+          <label>Ícone da matéria</label>
           <div class="icon-row">
             @for (option of iconOptions; track option.key) {
               <button
@@ -65,7 +65,7 @@
 
         <div class="field">
           <label for="description">Descrição (opcional)</label>
-          <textarea id="description" class="textarea" rows="2" formControlName="description" placeholder="Sobre o que é essa base visual?"></textarea>
+          <textarea id="description" class="textarea" rows="2" formControlName="description" placeholder="Sobre o que é essa matéria?"></textarea>
         </div>
 
         <div class="field">
@@ -85,7 +85,7 @@
           @if (isSubmitting()) {
             <span class="spinner"></span> Criando...
           } @else {
-            <app-icon name="plus" [size]="16" /> Criar base visual
+            <app-icon name="plus" [size]="16" /> Criar matéria
           }
         </button>
       </form>
@@ -102,10 +102,10 @@
             <strong>{{ subject.name }}</strong>
             <span class="area">{{ subject.area }}</span>
             <p>{{ subject.description }}</p>
-            <span class="teacher-count"><app-icon name="users" [size]="13" /> {{ subject.teacherCount }} professor(es) usando esta base</span>
+            <span class="teacher-count"><app-icon name="users" [size]="13" /> {{ subject.teacherCount }} professor(es) usando esta matéria</span>
           </div>
         } @empty {
-          <div class="card empty-card">Nenhuma base visual cadastrada ainda.</div>
+          <div class="card empty-card">Nenhuma matéria cadastrada ainda.</div>
         }
       </div>
     </div>

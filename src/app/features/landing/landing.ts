@@ -57,7 +57,7 @@ export class Landing implements OnInit, OnDestroy {
   }
 
   readonly features: Feature[] = [
-    { icon: 'layers', title: 'Bases visuais por área', description: 'O admin provisiona a plataforma e cria bases visuais personalizadas para cada matéria.' },
+    { icon: 'layers', title: 'Matérias por área', description: 'O admin configura a plataforma e cria matérias personalizadas para cada área de ensino.' },
     { icon: 'sparkles', title: 'Fluxo de aula contínuo', description: 'Do agendamento de aulas ao vivo à gestão de tarefas, tudo organizado em uma interface ágil e padronizada.' },
     { icon: 'users', title: 'Experiência do aluno leve', description: 'Uma área intuitiva, sem fricção, focada em manter o aluno engajado e aprendendo.' },
     { icon: 'chart', title: 'IA que entende dificuldades', description: 'Gere aulas, atividades e identifique onde cada aluno precisa de mais atenção.' },
@@ -68,13 +68,13 @@ export class Landing implements OnInit, OnDestroy {
       role: 'Admin',
       icon: 'shield',
       title: 'Controle total da plataforma',
-      description: 'Provisione professores, crie bases visuais por matéria e acompanhe toda a operação em um só lugar.',
-      bullets: ['Provisionamento de professores', 'Bases visuais por área', 'Métricas da plataforma'],
+      description: 'Aprove professores, gerencie matérias por área e acompanhe toda a operação em um só lugar.',
+      bullets: ['Aprovação de professores', 'Matérias por área', 'Métricas da plataforma'],
     },
     {
       role: 'Professor',
       icon: 'book',
-      title: 'O produto é o professor',
+      title: 'O professor como protagonista',
       description: 'Gere aulas com IA, acompanhe cada aluno de perto e gerencie tarefas e aulas ao vivo sem esforço.',
       bullets: ['Fábrica de aulas com IA', 'Insights de progresso por aluno', 'Aulas ao vivo e gravadas'],
     },

@@ -2,7 +2,7 @@
   <div class="page-header">
     <div>
       <h1>Painel Geral</h1>
-      <p>Visão consolidada da infraestrutura: professores cadastrados e bases visuais disponíveis.</p>
+      <p>Visão consolidada da infraestrutura: professores cadastrados e matérias disponíveis.</p>
     </div>
   </div>
 
@@ -19,7 +19,7 @@
     <div class="stat-grid">
       <app-stat-card icon="users" [value]="stats().activeTeachers" label="Professores ativos" tint="#2563eb" tintBg="#dbeafe" />
       <app-stat-card icon="user" [value]="stats().pendingTeachers" label="Cadastros pendentes" tint="#b45309" tintBg="#fef3c7" />
-      <app-stat-card icon="layers" [value]="stats().activeSubjects" label="Bases visuais ativas" tint="#4f46e5" tintBg="#eef2ff" />
+      <app-stat-card icon="layers" [value]="stats().activeSubjects" label="Matérias ativas" tint="#4f46e5" tintBg="#eef2ff" />
       <app-stat-card icon="graduation-cap" [value]="stats().totalStudents" label="Alunos na plataforma" tint="#15803d" tintBg="#dcfce7" />
     </div>
 
@@ -47,7 +47,7 @@
 
       <div class="card list-card">
         <div class="list-card-header">
-          <strong>Bases visuais</strong>
+          <strong>Matérias</strong>
           <a routerLink="/admin/materias">Configurar <app-icon name="chevron-right" [size]="14" /></a>
         </div>
         <ul>
@@ -63,7 +63,7 @@
               <span class="teacher-count">{{ subject.teacherCount }} prof.</span>
             </li>
           } @empty {
-            <li class="empty-copy">Nenhuma base visual cadastrada ainda.</li>
+            <li class="empty-copy">Nenhuma matéria cadastrada ainda.</li>
           }
         </ul>
       </div>
