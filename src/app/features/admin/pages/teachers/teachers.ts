@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AdminService } from '../../../../core/services/admin.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { Avatar } from '../../../../shared/ui/avatar/avatar';
@@ -9,7 +8,7 @@ import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 
 @Component({
   selector: 'app-admin-teachers',
-  imports: [ReactiveFormsModule, Avatar, StatusBadge, Icon, EmptyState],
+  imports: [Avatar, StatusBadge, Icon, EmptyState],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './teachers.html',
   styleUrl: './teachers.scss',
@@ -17,7 +16,6 @@ import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 export class Teachers implements OnInit {
   private readonly adminService = inject(AdminService);
   private readonly toast = inject(ToastService);
-  private readonly fb = inject(FormBuilder);
 
   readonly teachers = this.adminService.teachers;
   readonly toneForStatus = toneForStatus;
@@ -25,7 +23,6 @@ export class Teachers implements OnInit {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly search = signal('');
-  readonly showForm = signal(false);
   readonly reviewingId = signal<number | null>(null);
   readonly isSubmitting = signal(false);
 
@@ -38,11 +35,6 @@ export class Teachers implements OnInit {
         t.subjectName.toLowerCase().includes(query) ||
         t.subjectCategory.toLowerCase().includes(query)
     );
-  });
-
-  readonly form = this.fb.nonNullable.group({
-    name: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
   });
 
   ngOnInit(): void {
@@ -63,23 +55,6 @@ export class Teachers implements OnInit {
         this.toast.error('Não foi possível carregar os professores.');
       },
     });
-  }
-
-  toggleForm(): void {
-    this.showForm.update((v) => !v);
-  }
-
-  submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    this.toast.info(
-      'Professores se cadastram pela página de registro. Após o cadastro, aprove-os nesta lista.'
-    );
-    this.form.reset({ name: '', email: '' });
-    this.showForm.set(false);
   }
 
   confirmApproval(teacherId: number): void {

@@ -2,7 +2,7 @@
   <div class="page-header">
     <div>
       <h1>Painel Geral</h1>
-      <p>Visão consolidada da infraestrutura: professores provisionados e bases visuais disponíveis.</p>
+      <p>Visão consolidada da infraestrutura: professores cadastrados e bases visuais disponíveis.</p>
     </div>
   </div>
 
@@ -73,7 +73,7 @@
       <div class="pending-banner">
         <span class="pending-icon"><app-icon name="users" [size]="20" /></span>
         <div>
-          <strong>Provisione novos professores</strong>
+          <strong>Cadastros aguardando aprovação</strong>
           <span>{{ pendingTeachers().length }} cadastro(s) aguardando aprovação. Aprove para liberar o acesso.</span>
         </div>
         <a routerLink="/admin/professores" class="btn btn-secondary">Ver cadastros <app-icon name="arrow-right" [size]="15" /></a>

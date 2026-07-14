@@ -2,35 +2,9 @@
   <div class="page-header">
     <div>
       <h1>Gestão de Professores</h1>
-      <p>Professores cadastrados na plataforma, suas áreas e status de aprovação.</p>
+      <p>Aprove cadastros feitos pelos próprios professores e acompanhe o status de cada conta.</p>
     </div>
-    <button type="button" class="btn btn-primary" (click)="toggleForm()">
-      <app-icon name="plus" [size]="16" /> Provisionar professor
-    </button>
   </div>
-
-  @if (showForm()) {
-    <form [formGroup]="form" (ngSubmit)="submit()" class="card form-card" novalidate>
-      <div class="form-grid">
-        <div class="field">
-          <label for="name">Nome completo</label>
-          <input id="name" class="input" formControlName="name" placeholder="Ex.: Camila Souza" />
-        </div>
-        <div class="field">
-          <label for="email">E-mail</label>
-          <input id="email" type="email" class="input" formControlName="email" placeholder="professor@edusync.ai" />
-        </div>
-      </div>
-      <p class="hint">
-        <app-icon name="alert-triangle" [size]="13" />
-        Professores se cadastram pela página de registro. Use este atalho apenas como referência.
-      </p>
-      <div class="form-actions">
-        <button type="button" class="btn btn-secondary" (click)="toggleForm()">Cancelar</button>
-        <button type="submit" class="btn btn-primary"><app-icon name="users" [size]="15" /> Entendi</button>
-      </div>
-    </form>
-  }
 
   <div class="search-box">
     <app-icon name="search" [size]="16" />
