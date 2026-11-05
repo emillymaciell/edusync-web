@@ -4,6 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { DEMO_ENABLED, DemoQuickLogin, type DemoLoginChoice } from '../../../demo/demo-entry';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { ThemeToggle } from '../../../shared/ui/theme-toggle/theme-toggle';
 
@@ -12,7 +13,7 @@ const PENDING_APPROVAL_MESSAGE =
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, Icon, ThemeToggle],
+  imports: [ReactiveFormsModule, RouterLink, Icon, ThemeToggle, DemoQuickLogin],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.html',
   styleUrl: './login.scss',
@@ -25,11 +26,17 @@ export class Login {
 
   readonly submitted = signal(false);
   readonly isLoading = signal(false);
+  readonly demoEnabled = DEMO_ENABLED;
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(4)]],
   });
+
+  enterAs(choice: DemoLoginChoice): void {
+    this.form.setValue({ email: choice.email, password: choice.password });
+    this.submit();
+  }
 
   submit(): void {
     this.submitted.set(true);

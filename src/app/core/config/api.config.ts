@@ -1,1 +1,3 @@
-export const API_BASE_URL = 'https://edusync-api-08lx.onrender.com';
+import { environment } from '../../../environments/environment';
+
+export const API_BASE_URL = environment.apiBaseUrl;

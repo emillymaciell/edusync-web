@@ -1,0 +1,229 @@
+:host {
+  display: contents;
+}
+
+.demo-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  background: rgba(16, 19, 35, 0.48);
+}
+
+.demo-modal {
+  position: relative;
+  width: min(440px, 100%);
+  padding: 28px 24px 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-lg);
+}
+
+.demo-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.demo-modal-close:hover,
+.demo-modal-close:focus-visible {
+  background: var(--color-neutral-bg);
+  color: var(--color-text);
+}
+
+.demo-modal h2 {
+  margin: 0 32px 10px 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.demo-modal p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.demo-modal ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 18px 0 22px;
+  padding: 0;
+  list-style: none;
+}
+
+.demo-modal li {
+  position: relative;
+  padding-left: 16px;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.demo-modal li::before {
+  content: '';
+  position: absolute;
+  top: 0.55em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+}
+
+.demo-start {
+  width: 100%;
+}
+
+.demo-launcher {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 45;
+}
+
+.demo-fab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+}
+
+.demo-fab svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.demo-fab svg path:last-child {
+  fill: currentColor;
+  stroke: none;
+}
+
+.demo-fab:hover,
+.demo-fab:focus-visible {
+  border-color: var(--color-primary);
+}
+
+.demo-tooltip {
+  position: absolute;
+  right: calc(100% + 8px);
+  bottom: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.demo-fab:hover .demo-tooltip,
+.demo-fab:focus-visible .demo-tooltip {
+  opacity: 1;
+  transform: none;
+}
+
+.demo-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  border: none;
+  background: transparent;
+  cursor: default;
+}
+
+.demo-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  z-index: 46;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: min(280px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-lg);
+}
+
+.demo-menu-title {
+  margin: 0 0 2px;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.demo-menu-status,
+.demo-menu-quota {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.demo-menu-quota {
+  margin-bottom: 8px;
+}
+
+.demo-menu button[role='menuitem'] {
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.demo-menu button[role='menuitem']:hover,
+.demo-menu button[role='menuitem']:focus-visible {
+  background: var(--color-neutral-bg);
+}
+
+@media (max-width: 959.98px) {
+  .demo-launcher {
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 640px) {
+  .demo-modal {
+    padding: 24px 18px 18px;
+  }
+}

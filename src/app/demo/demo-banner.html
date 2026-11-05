@@ -1,0 +1,63 @@
+@if (welcomeOpen()) {
+  <div class="demo-backdrop" (click)="closeWelcome()">
+    <div
+      #welcomeDialog
+      class="demo-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="demo-welcome-title"
+      aria-describedby="demo-welcome-desc"
+      (click)="$event.stopPropagation()"
+    >
+      <button type="button" class="demo-modal-close" (click)="closeWelcome()" aria-label="Fechar">
+        <span aria-hidden="true">×</span>
+      </button>
+
+      <h2 id="demo-welcome-title">Explore o EduSync!</h2>
+      <p id="demo-welcome-desc">
+        Conheça as funcionalidades da plataforma em um ambiente de demonstração com dados fictícios.
+        Explore livremente, sem afetar dados reais.
+      </p>
+
+      <ul>
+        <li>Acesse os perfis de administrador, professor e aluno.</li>
+        <li>Experimente os recursos de inteligência artificial.</li>
+        <li>As alterações são temporárias e podem ser reiniciadas.</li>
+      </ul>
+
+      <button #startButton type="button" class="btn btn-primary demo-start" (click)="closeWelcome()">
+        Começar a explorar
+      </button>
+    </div>
+  </div>
+} @else {
+  <div class="demo-launcher">
+    @if (menuOpen()) {
+      <button type="button" class="demo-menu-backdrop" aria-label="Fechar menu da demonstração" (click)="closeMenu()"></button>
+      <div id="demo-menu" class="demo-menu" role="menu" aria-label="Ambiente de demonstração">
+        <p class="demo-menu-title">Ambiente de demonstração</p>
+        <p class="demo-menu-status">{{ aiStatusLabel() }}</p>
+        <p class="demo-menu-quota">IA: {{ remainingLabel() }} de {{ limit }} gerações restantes</p>
+        <button type="button" role="menuitem" (click)="replayTour()">Rever tour guiado</button>
+        <button type="button" role="menuitem" (click)="restart()">Reiniciar demonstração</button>
+      </div>
+    }
+
+    <button
+      type="button"
+      class="demo-fab"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="demo-menu"
+      aria-label="Ambiente de demonstração"
+      (click)="toggleMenu()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="2" y="3" width="20" height="14" rx="2" />
+        <path d="M12 17v4" />
+        <path d="M8 21h8" />
+        <path d="m10 8 5 3-5 3z" />
+      </svg>
+      <span class="demo-tooltip">Ambiente de demonstração</span>
+    </button>
+  </div>
+}

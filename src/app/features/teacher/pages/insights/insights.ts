@@ -88,6 +88,7 @@ export class Insights {
       next: (response) => {
         this.insight.set(response);
         this.refreshLoading.set(false);
+        if (isExampleInsight(response)) return;
         this.toastService.success('Análise atualizada com sucesso.');
       },
       error: () => {
@@ -163,4 +164,8 @@ export class Insights {
       },
     });
   }
+}
+
+function isExampleInsight(response: StudentInsightResponse): boolean {
+  return (response as StudentInsightResponse & { example?: boolean }).example === true;
 }
