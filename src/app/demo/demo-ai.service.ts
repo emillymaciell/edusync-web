@@ -10,7 +10,8 @@ import { DemoAiQuotaService } from './demo-ai-quota.service';
 import { DemoUser } from './demo-fixtures';
 import { DemoAiStudentContext, DemoRequestError, DemoStore } from './demo-store.service';
 
-const GENERATION_TIMEOUT_MS = 8000;
+// O back-end pode aguardar o Gemini por 30 segundos, além do tempo de rede.
+const GENERATION_TIMEOUT_MS = 45000;
 const PING_TIMEOUT_MS = 45000;
 const REMAINING_HEADER = 'X-Demo-AI-Remaining';
 
@@ -313,3 +314,4 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function isTimeout(error: unknown): boolean {
   return !!error && typeof error === 'object' && (error as { name?: string }).name === 'TimeoutError';
 }
+
