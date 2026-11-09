@@ -1,59 +1,115 @@
-# EdusyncWeb
+# EduSync
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.2.
+Plataforma educacional para professores particulares que reúne gestão de alunos, organização de aulas e inteligência artificial em um só lugar.
 
-## Development server
+🔗 **[Acessar a plataforma](https://edusync-web-lac.vercel.app/)**  
+🧪 **[Explorar a demonstração](https://edusync-demo.vercel.app/)**
 
-To start a local development server, run:
+## Sobre o projeto
 
-```bash
-ng serve
-```
+O EduSync foi desenvolvido como Trabalho de Conclusão de Curso (TCC) do programa **Ford &lt;Enter&gt;**, com o objetivo de simplificar a rotina de professores particulares e apoiar o acompanhamento individual dos alunos.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+A plataforma funciona como um **CRM educacional**, centralizando alunos, aulas, tarefas e informações de progresso. A integração com o **Google Gemini** auxilia na preparação de materiais e na análise do desempenho dos estudantes.
 
-## Code scaffolding
+O projeto segue o modelo **SaaS B2B2C**: o professor utiliza a plataforma para gerenciar seu trabalho e oferece aos alunos um ambiente para acessar atividades, acompanhar resultados e participar das aulas.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Funcionalidades
 
-```bash
-ng generate component component-name
-```
+### Administrador
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- Aprovar o cadastro de professores.
+- Cadastrar e gerenciar matérias.
+- Consultar métricas globais da plataforma.
 
-```bash
-ng generate --help
-```
+### Professor
 
-## Building
+- Cadastrar e acompanhar alunos.
+- Agendar aulas ao vivo e disponibilizar links de acesso.
+- Criar tarefas, acompanhar entregas e liberar correções.
+- Utilizar a **Fábrica de Aulas** para gerar materiais personalizados com IA.
+- Gerar exercícios conforme o assunto e o nível do aluno.
+- Consultar **Insights de IA** com análises de progresso e recomendações pedagógicas.
+- Exportar aulas em PDF.
 
-To build the project run:
+### Aluno
 
-```bash
-ng build
-```
+- Acompanhar progresso, módulos e conquistas.
+- Consultar e entregar tarefas.
+- Acessar os links das aulas ao vivo.
+- Trocar a senha padrão no primeiro acesso.
+- Visualizar notas após a liberação da correção pelo professor.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Como abrir
 
-## Running unit tests
+O EduSync está disponível online, sem necessidade de instalação.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Aplicação principal
 
-```bash
-ng test
-```
+Acesse **[edusync-web-lac.vercel.app](https://edusync-web-lac.vercel.app/)**.
 
-## Running end-to-end tests
+- **Professor:** solicite acesso pelo cadastro e aguarde a aprovação do administrador.
+- **Aluno:** utilize as credenciais fornecidas pelo professor.
+- **Administrador:** entre com sua conta administrativa.
 
-For end-to-end (e2e) testing, run:
+### Demonstração pública
 
-```bash
-ng e2e
-```
+Para conhecer os recursos sem criar uma conta, acesse **[edusync-demo.vercel.app](https://edusync-demo.vercel.app/)**.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Também é possível abrir a demonstração pela página inicial da aplicação principal, no bloco **“Quer conhecer o EduSync na prática?”**, clicando em **“Explorar demonstração”**.
 
-## Additional Resources
+Na demo, você pode:
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Entrar rapidamente como administrador, professora ou aluna.
+- Explorar a plataforma com dados fictícios.
+- Experimentar os recursos de inteligência artificial.
+- Reiniciar a experiência pelo menu de demonstração.
+
+As alterações da demo ficam em memória e não afetam os dados da aplicação principal. Os recursos de IA utilizam o backend real e estão sujeitos a limites de uso.
+
+> O backend utiliza uma instância gratuita no Render. Após um período sem uso, a primeira resposta pode demorar enquanto o serviço é iniciado.
+
+## Tecnologias utilizadas
+
+### Front-end
+
+- **Angular 20** — construção da interface.
+- **TypeScript 5.8** — desenvolvimento da aplicação.
+- **Angular Router** — navegação entre páginas.
+- **RxJS** — operações assíncronas e fluxos de dados.
+- **SCSS** — estilização e layout responsivo.
+- **html2pdf.js** — exportação de aulas em PDF.
+- **Jasmine e Karma** — ferramentas de teste.
+
+### Back-end
+
+- **Java 21** e **Spring Boot 3.3.4** — desenvolvimento da API.
+- **Spring Web** — endpoints REST.
+- **Spring Data JPA e Hibernate** — persistência de dados.
+- **PostgreSQL** — banco de dados relacional.
+- **Spring Security, JWT e BCrypt** — autenticação e controle de acesso.
+- **Bean Validation** — validação dos dados recebidos.
+- **WebClient** — comunicação com o Google Gemini.
+- **Springdoc OpenAPI e Swagger UI** — documentação da API.
+- **Maven** — gerenciamento de dependências e build.
+
+### Inteligência artificial e hospedagem
+
+- **Google Gemini** — geração de aulas, exercícios e análises pedagógicas.
+- **Vercel** — hospedagem da aplicação principal e da demonstração.
+- **Render** — hospedagem do backend.
+- **Docker** — empacotamento do backend.
+
+## Organização dos repositórios
+
+O projeto é dividido em dois repositórios:
+
+- **[edusync-web](https://github.com/emillymaciell/edusync-web):** interface utilizada por administradores, professores e alunos.
+- **[edusync-api](https://github.com/emillymaciell/edusync-api):** API responsável pelas regras de negócio, autenticação, persistência e integração com IA.
+
+A aplicação principal e a demonstração utilizam o mesmo código do front-end, com configurações de build separadas e projetos independentes na Vercel.
+
+As chamadas ao Gemini são realizadas pelo backend, mantendo a chave de acesso à IA fora do navegador.
+
+## Objetivo
+
+Reduzir o tempo dedicado à organização e à preparação de materiais, oferecendo ao professor ferramentas para acompanhar cada aluno e personalizar o ensino.
