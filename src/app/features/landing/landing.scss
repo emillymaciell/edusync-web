@@ -255,6 +255,51 @@ section h2 {
 
 /* ---------------- Features ---------------- */
 
+.demo-preview {
+  padding-block: 16px;
+}
+
+.demo-preview-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-primary-light);
+}
+
+.demo-preview-card h2 {
+  text-align: left;
+  font-size: 1.2rem;
+}
+
+.demo-preview-card p {
+  margin-top: 8px;
+  max-width: 65ch;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
+.demo-preview-card .btn {
+  flex-shrink: 0;
+  white-space: normal;
+}
+
+.demo-preview-card .btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 4px;
+}
+
+@media (min-width: 960px) {
+  .demo-preview-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
 .features-grid {
   margin-top: 32px;
   display: grid;

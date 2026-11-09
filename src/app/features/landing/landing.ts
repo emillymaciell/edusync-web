@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { Icon, IconName } from '../../shared/ui/icon/icon';
 import { PrivacyPolicyDialog } from '../../shared/ui/privacy-policy-dialog/privacy-policy-dialog';
 import { ThemeToggle } from '../../shared/ui/theme-toggle/theme-toggle';
@@ -32,6 +33,7 @@ interface Testimonial {
   styleUrl: './landing.scss',
 })
 export class Landing implements OnInit, OnDestroy {
+  readonly demoUrl = environment.demo ? '' : environment.demoUrl;
   readonly cookieBannerVisible = signal(true);
   readonly showPrivacyDialog = signal(false);
   readonly mobileMenuOpen = signal(false);

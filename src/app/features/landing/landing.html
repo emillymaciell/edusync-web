@@ -70,6 +70,24 @@
     </div>
   </section>
 
+  @if (demoUrl) {
+    <section class="demo-preview" aria-labelledby="demo-preview-title">
+      <div class="demo-preview-card">
+        <div>
+          <h2 id="demo-preview-title">Quer conhecer o EduSync na prática?</h2>
+          <p>Explore uma demonstração interativa da plataforma, conheça os recursos e experimente os diferentes perfis de acesso.</p>
+        </div>
+        <a
+          [href]="demoUrl"
+          class="btn btn-secondary"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Explorar demonstração do EduSync (abre em uma nova aba)"
+        >Explorar demonstração <app-icon name="arrow-right" [size]="16" /></a>
+      </div>
+    </section>
+  }
+
   <section class="features" id="recursos">
     <h2>Tudo que sua operação de ensino precisa</h2>
     <p class="section-lead">Do provisionamento à sala de aula, cada camada foi pensada para reduzir fricção.</p>
